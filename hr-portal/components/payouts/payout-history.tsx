@@ -168,9 +168,13 @@ export function PayoutHistory() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <span className="font-mono text-sm">
-                            {employee.walletAddress.slice(0, 6)}...{employee.walletAddress.slice(-4)}
-                          </span>
+                        <span
+  className="font-mono text-sm"
+  title={employee.walletAddress} // show full address on hover
+>
+  {employee.walletAddress.slice(0, 6)}...{employee.walletAddress.slice(-4)}
+</span>
+
                         </TableCell>
                       </TableRow>
                     );

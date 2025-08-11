@@ -16,6 +16,8 @@ interface TransactionHistoryProps {
   transactions: TreasuryTransaction[];
   className?: string;
 }
+import { MorphHoleskyTestnet } from '@/config';
+import { ExternalLink } from 'lucide-react';
 
 export function TransactionHistory({ transactions, className }: TransactionHistoryProps) {
   const getStatusIcon = (status: string) => {
@@ -70,8 +72,17 @@ export function TransactionHistory({ transactions, className }: TransactionHisto
                     {transaction.type === 'deposit' ? '+' : '-'}${transaction.amount.toLocaleString()}
                   </p>
                   <p className="text-sm text-muted-foreground">{transaction.description}</p>
-                  <p className="text-xs text-muted-foreground font-mono">
+                  <p className="text-xs text-muted-foreground font-mono mx-3">
                     {transaction.txHash}
+
+                      <a
+                            href={`${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${transaction.txHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-primary"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
                   </p>
                 </div>
               </div>

@@ -89,12 +89,16 @@ export function EmployeeTable({
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Wallet className="mr-1 h-3 w-3" />
-                  <span className="font-mono">
-                    {employee.walletAddress.slice(0, 6)}...{employee.walletAddress.slice(-4)}
-                  </span>
-                </div>
+               <div
+  className="flex items-center text-sm text-muted-foreground"
+  title={employee.walletAddress} // shows full address on hover
+>
+  <Wallet className="mr-1 h-3 w-3" />
+  <span className="font-mono">
+    {employee.walletAddress.slice(0, 6)}...{employee.walletAddress.slice(-4)}
+  </span>
+</div>
+
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">
                 {formatDistanceToNow(new Date(employee.createdAt), { addSuffix: true })}

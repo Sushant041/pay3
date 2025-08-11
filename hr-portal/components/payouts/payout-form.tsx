@@ -171,7 +171,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
         </DialogHeader>
 
         <div className="space-y-6">
-          {hasInsufficientBalance && (
+          {/* {hasInsufficientBalance && (
             <Alert className="border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-900">
@@ -186,7 +186,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
                 </div>
               </AlertDescription>
             </Alert>
-          )}
+          )} */}
 
 
 

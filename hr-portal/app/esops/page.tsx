@@ -18,6 +18,8 @@ import {
   removeEmployeeFromESOP,
   weiToEth
 } from '@/utils/esopsContractUtils';
+import { waitForTransactionReceipt} from '@wagmi/core';
+import { config } from '@/config';
 
 interface VestingData {
   employee: string;
@@ -44,6 +46,7 @@ export default function ESOPsPage() {
 
   const loadData = async () => {
     try {
+      console.log('getting call')
       const [employeesData, vestingsData] = await Promise.all([
         employeeApi.getAll(),
         loadVestingsFromContract(),
@@ -86,8 +89,11 @@ export default function ESOPsPage() {
 
   const handleRemoveEmployee = async (employeeAddress: string) => {
     try {
-      await removeEmployeeFromESOP(employeeAddress);
-      // Reload data after removing
+         const tx = await removeEmployeeFromESOP(employeeAddress);
+     const receipt = await waitForTransactionReceipt(config, {
+              hash: tx as `0x${string}`
+              
+            })
       await loadData();
     } catch (error) {
       console.error('Error removing employee from ESOP:', error);

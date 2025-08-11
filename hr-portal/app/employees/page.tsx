@@ -68,8 +68,8 @@ export default function EmployeesPage() {
     }
   };
 
-  const selectedEmployeeData = employees.filter(emp => selectedEmployees.includes(emp._id));
-  const totalSelectedSalary = selectedEmployeeData.reduce((sum, emp) => sum + emp.salaryUSD, 0);
+  const selectedEmployeeData = employees?.filter(emp => selectedEmployees.includes(emp._id));
+  const totalSelectedSalary = selectedEmployeeData?.reduce((sum, emp) => sum + emp.salaryUSD, 0);
   const hasInsufficientBalance = totalSelectedSalary > treasuryBalance;
 
   const payAllEmployees = () => {
@@ -139,13 +139,13 @@ export default function EmployeesPage() {
         <div className="flex items-center space-x-2">
           <DollarSign className="h-5 w-5 text-primary" />
           <span className="font-medium">
-            Total monthly: ${totalSelectedSalary.toLocaleString()}
+            Total monthly: ${totalSelectedSalary?.toLocaleString()}
           </span>
         </div>
         <div className="flex items-center space-x-2">
           <Wallet className="h-5 w-5 text-primary" />
           <span className="font-medium">
-            Treasury: ${treasuryBalance.toLocaleString()}
+            Treasury: ${treasuryBalance?.toLocaleString()}
           </span>
         </div>
       </div>

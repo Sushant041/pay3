@@ -29,9 +29,12 @@ import { addEmployeeToESOP, ethToWei } from '@/utils/esopsContractUtils';
 import { TrendingUp, User, Calendar, Award, Clock } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
+import { waitForTransactionReceipt } from '@wagmi/core'
+import { config } from '@/config';
+
 const esopSchema = z.object({
   employeeId: z.string().min(1, 'Employee is required'),
-  tokenAmount: z.number().min(1, 'Token amount must be positive'),
+  tokenAmount: z.number().min(0.001, 'Min amount is 0.001'),
   vestingStart: z.string().min(1, 'Vesting start date is required'),
   cliffMonths: z.number().min(0, 'Cliff months must be non-negative'),
   vestingMonths: z.number().min(1, 'Vesting months must be positive'),
@@ -72,7 +75,7 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       const tokenAmountInWei = ethToWei(data.tokenAmount);
       
       // Call the smart contract
-      await addEmployeeToESOP(
+      const tx= await addEmployeeToESOP(
         employee.walletAddress,
         startTime,
         data.cliffMonths,
@@ -82,6 +85,11 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       
       reset();
       setOpen(false);
+      // await tx.wait();
+      const receipt = await waitForTransactionReceipt(config, {
+          hash: tx as `0x${string}`
+          
+        })
       onESOPCreated();
     } catch (error) {
       console.error('Failed to create ESOP:', error);
