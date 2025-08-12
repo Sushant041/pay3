@@ -28,11 +28,11 @@ export function BalanceDisplay() {
   
     const loadBalances = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
   
         // Get USDC balance
         const usdcBalance = await getBalance(address);
-        const formattedBalance = Number(formatUnits(BigInt(usdcBalance), 6));
+        const formattedBalance = Number(formatUnits(BigInt(usdcBalance), 18));
         console.log('USDC Balance:', formattedBalance);
         setUsdcBalance(formattedBalance.toString());
       } catch (error) {

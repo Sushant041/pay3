@@ -24,6 +24,7 @@ import { waitForTransactionReceipt } from '@wagmi/core';
 import { config } from '@/config';
 import { LoadingSpinner, LoadingDots } from '@/components/ui/loading-spinner';
 import { MorphHoleskyTestnet } from '@/config';
+import { parseUnits } from 'viem';
 
 interface PayoutFormProps {
   selectedEmployees: Employee[];
@@ -74,7 +75,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
     try {
       // Prepare employee addresses and amounts
       const employeeAddresses = selectedEmployees.map(emp => emp.walletAddress);
-      const amounts = selectedEmployees.map(emp => Math.floor(emp.salaryUSD * 1000000).toString()); // Convert to USDC units
+      const amounts = selectedEmployees.map(emp => parseUnits(emp.salaryUSD.toString(), 18).toString().toString());
 
       // Execute batch pay transaction
       const startTime = Date.now();

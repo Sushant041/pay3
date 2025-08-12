@@ -1,6 +1,5 @@
 import { cookieStorage, createStorage, http } from '@wagmi/core'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { eduChainTestnet , hardhat } from '@reown/appkit/networks'
 // import { Chain } from 'wagmi'
 
 // Load env
@@ -10,12 +9,33 @@ if (!projectId) {
   throw new Error('Project ID is not defined')
 }
 
-// Define your custom network
 
-// Use either eduChainTestnet or your custom chain
-export const network = hardhat// or [eduChainTestnet, pharosDevnet] if you want both
+export const MorphHoleskyTestnet = {
+  id: 2810,
+  name: 'Morph Holesky Testnet',
+  network: 'morph-holesky-testnet',
+  nativeCurrency: {
+    name: 'ETH',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-quicknode-holesky.morphl2.io'],
+    },
+    public: {
+      http: ['https://rpc-quicknode-holesky.morphl2.io'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Morph Holesky Testnet Explorer',
+      url: 'https://explorer-holesky.morphl2.io',
+    },
+  },
+}
 
-// Set up Wagmi Adapter
+export const network = MorphHoleskyTestnet
 export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({
     storage: cookieStorage,
