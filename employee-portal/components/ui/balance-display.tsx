@@ -68,7 +68,7 @@ export function BalanceDisplay() {
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Coins className="h-4 w-4 text-green-500" />
-        <div className="font-medium text-foreground mr-3">USDC</div>
+        <div className="font-medium text-foreground mr-3">USDT</div>
       </div>
       <div className="text-sm text-muted-foreground">
         {loading ? (
