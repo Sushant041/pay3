@@ -94,14 +94,13 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
 
      
       
-      reset();
-      setOpen(false);
+    
       // await tx.wait();
       const receipt = await waitForTransactionReceipt(config, {
           hash: tx as `0x${string}`
           
         })
-
+console.log('Transaction receipt:', receipt);
          await onESOPCreated({
       employeeId: data.employeeId,
       totalTokens: data.tokenAmount,
@@ -109,7 +108,10 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       cliff: data.cliffMonths,
       start: startTime
     });
+     
 
+      reset();
+      setOpen(false);
     toast.success('ESOP granted successfully');
 
     } catch (error) {

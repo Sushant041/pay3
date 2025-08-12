@@ -35,6 +35,8 @@ interface VestingData {
   claimableAmount: number;
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+
 export default function ESOPsPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [vestings, setVestings] = useState<VestingData[]>([]);
@@ -63,7 +65,8 @@ export default function ESOPsPage() {
   const handleESOPCreated = async (esopData: any) => {
   try {
     // Make API request to your backend
-    await fetch('/api/esops', {
+    console.log('Creating ESOP with data:', esopData);
+    await fetch(`/api/esops`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(esopData),
@@ -299,7 +302,7 @@ export default function ESOPsPage() {
                   <p className="text-muted-foreground mb-4">
                     Start granting employee stock options to incentivize and retain talent.
                   </p>
-                  <ESOPForm employees={employees} onESOPCreated={loadData} />
+                  <ESOPForm employees={employees} onESOPCreated={handleESOPCreated} />
                 </div>
               )}
             </div>
@@ -319,7 +322,7 @@ export default function ESOPsPage() {
                     <p className="text-sm text-muted-foreground">{employee.designation}</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    ${employee.salaryUSD.toLocaleString()}/year
+                    ${employee.salaryUSD.toLocaleString()}/month
                   </div>
                 </div>
               ))}

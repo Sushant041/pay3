@@ -56,6 +56,7 @@ export default function EmployeesPage() {
   const loadDashboardData = async () => {
   try {
     setLoading(true);
+    setSelectedEmployees([]);
 
     const [balance, employeeList] = await Promise.all([
       getTreasuryBalanceUSD(),

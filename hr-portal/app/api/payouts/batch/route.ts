@@ -20,7 +20,7 @@ async function sendEmailToEmployee(employeeId: string, name: string, email: stri
     // Send email asynchronously
     // console.log(`Sending email to ${walletAddress} for payout of ${amountUSD} USD`);
     await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'payout-notification@resend.dev',
       to: email,
       subject: 'Payout Notification',
       react: EmailTemplate({ firstName: name, amountUSD, txHash ,walletAddress , companyName}), // Use the inline EmailTemplate component
@@ -43,44 +43,53 @@ export async function POST(req: NextRequest) {
     // Create PayoutBatch
     const batch = await PayoutBatch.create({ txHash, totalAmount });
 
-    // Fetch employee details from DB and create Payout documents
-    const payoutDocs = [];
+    // Fetch settings for company name
     const settings = await Settings.findOne();
-const companyName = settings?.organizationName || "Your Company";
-    for (const employee of payouts) {
-      const { _id, salaryUSD } = employee;
-      // Fetch employee details by employeeId (e.g., name and email)
-      const employeeData = await Employee.findById(_id);
+    const companyName = settings?.organizationName || "Your Company";
+
+    const payoutDocs = [];
+
+    for (const payout of payouts) {
+      const { employeeId, amountUSD } = payout;
+
+      // Fetch employee details by employeeId
+      const employeeData = await Employee.findById(employeeId);
 
       if (employeeData) {
-        // Create payout document
         const payoutDoc = {
           batchId: batch._id,
-          employeeId: _id,
-          amountUSD: Math.round(salaryUSD),
+          employeeId,
+          amountUSD: Math.round(amountUSD),
           status: "completed",
         };
         payoutDocs.push(payoutDoc);
 
         // Send email notification asynchronously
-         sendEmailToEmployee(_id, employeeData.name, employeeData.email, payoutDoc.amountUSD, txHash , companyName, employeeData.walletAddress);
+        sendEmailToEmployee(
+          employeeId,
+          employeeData.name,
+          employeeData.email,
+          payoutDoc.amountUSD,
+          txHash,
+          companyName,
+          employeeData.walletAddress
+        );
       }
     }
 
-    // Insert Payouts into the database
+    // Insert payouts into the database
     await Payout.insertMany(payoutDocs);
 
     // Create Treasury Transaction
     await TreasuryTransaction.create({
-      type: 'withdrawal',
+      type: "withdrawal",
       amount: totalAmount,
-      currency: 'USD',
+      currency: "USD",
       description: `Payout batch ${batch._id} - ${payouts.length} employee(s) paid out`,
-      txHash: txHash,
-      status: 'completed',
+      txHash,
+      status: "completed",
     });
 
-    // Return the response with batch and payouts
     return NextResponse.json({ batch, payouts: payoutDocs }, { status: 201 });
   } catch (err) {
     console.error(err);

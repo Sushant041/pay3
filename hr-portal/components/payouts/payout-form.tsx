@@ -74,6 +74,8 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
 
     try {
       // Prepare employee addresses and amounts
+      console.log('Selected Employees:', selectedEmployees);
+      const employees = selectedEmployees;
       const employeeAddresses = selectedEmployees.map(emp => emp.walletAddress);
       const amounts = selectedEmployees.map(emp => parseUnits(emp.salaryUSD.toString(), 18).toString().toString());
 
@@ -113,7 +115,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       }
 
       // Create payout record in database
-      const payouts = selectedEmployees.map(employee => ({
+      const payouts = employees.map(employee => ({
         employeeId: employee._id,
         amountUSD: Math.round(employee.salaryUSD), // Already monthly salary
       }));
@@ -123,7 +125,9 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
         payouts,
       });
 
+
       toast.success('Payout completed successfully!');
+
       
       // Don't auto-close the modal - let user close it manually
       // Don't call onClearSelection() here as it might cause the modal to close
