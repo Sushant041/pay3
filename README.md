@@ -81,27 +81,41 @@ With PayThree, payroll isn’t just faster and cheaper  it’s global, verifiabl
 
 ### **Wallet-First Security**
 
+<img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/e2f7ad2d-efa3-4d33-8da1-0732e4a6850a" />
+
+
 
     
 
 ### **Employee Management**
 
 -   Add & manage blockchain-linked employee profiles.
+
+ <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/73f4b52d-9f70-405f-9a9e-d8e87014a8e9" />
+
+
     
 
 ### **ESOP Management**
 
 -   Grant, track, and vest ESOPs automatically.
+
+  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/00fb6fbc-ade1-4996-a12b-db9ed9a2876d" />
+
     
 
 ### **Payout Processing**
 
 -   One-click batch payouts with transaction history.
-    
+    <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/84681c2c-b3ac-4649-bcb4-5dd587836245" />
+
 
 ### **Settings & Configurations**
 
 -   Manage org details, token addresses, and payout preferences.
+
+  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/0c4157b4-5a0c-4b56-a5b3-2cc1f8a50257" />
+
     
 
 ----------
@@ -111,16 +125,25 @@ With PayThree, payroll isn’t just faster and cheaper  it’s global, verifiabl
 ### **Dashboard**
 
 -   View total earnings, upcoming payouts, and ESOP progress.
+
+  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/cf8e080c-c23e-42fb-aaf8-84676bd86e1b" />
+
     
 
 ### **My ESOPs**
 
 -   Track grants, vesting timelines, and claim options.
+
+  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/4cdae53d-de44-4a34-b765-294eee3c1ae4" />
+
     
 
 ### **My Pay**
 
 -   View payout history and verify on-chain details.
+
+  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/6284a88e-b94d-4672-ad8f-af806d958203" />
+
 
 ## **Future Roadmap for Morph**
 
