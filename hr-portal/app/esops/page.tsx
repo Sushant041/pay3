@@ -60,6 +60,22 @@ export default function ESOPsPage() {
     }
   };
 
+  const handleESOPCreated = async (esopData: any) => {
+  try {
+    // Make API request to your backend
+    await fetch('/api/esops', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(esopData),
+    });
+
+    // Refresh data after creation
+    await loadData();
+  } catch (error) {
+    console.error('Failed to create ESOP:', error);
+  }
+};
+
   const loadVestingsFromContract = async (): Promise<VestingData[]> => {
     try {
       const [employeeAddresses, vestingData] = await getAllVestings();
@@ -134,7 +150,7 @@ export default function ESOPsPage() {
             Grant and track employee stock option plans.
           </p>
         </div>
-        <ESOPForm employees={employees} onESOPCreated={loadData} />
+        <ESOPForm employees={employees} onESOPCreated={handleESOPCreated} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

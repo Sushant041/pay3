@@ -1,26 +1,52 @@
-import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { ESOPGrantEmailTemplate } from "@/emailTemplates/esopGrantNotification";
+import Employee from "@/models/Employee";
+import Settings from "@/models/Settings";
 import { connectDB } from "@/lib/mongodb";
-import Esop from "@/models/Esop";
 
-export const dynamic = 'force-dynamic';
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const data = await req.json();
-    const esop = await Esop.create(data);
-    return NextResponse.json({ success: true, esop });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
-  }
-}
 
-export async function GET() {
-  try {
-    await connectDB();
-    const esops = await Esop.find().populate('employeeId', 'name designation');
-    return NextResponse.json({ success: true, esops });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const {
+      employeeId,
+      totalTokens,
+      durationMonths,
+      cliffMonths,
+      startDate
+    } = await req.json();
+
+    // Get employee details
+    const employee = await Employee.findById(employeeId);
+    if (!employee) throw new Error("Employee not found");
+
+    const settings = await Settings.findOne();
+    const companyName = settings?.organizationName || "Your Company";
+
+    // Parse start date safely
+    const startDateFormatted = new Date(startDate).toLocaleDateString();
+
+    // Send email
+    await resend.emails.send({
+      from: "esop-notifications@resend.dev",
+      to: employee.email,
+      subject: `You've been granted an ESOP by ${companyName}`,
+      react: ESOPGrantEmailTemplate({
+        firstName: employee.name,
+        companyName,
+        totalTokens,
+        durationMonths,
+        cliffMonths,
+        startDate: startDateFormatted,
+        employeePortalUrl: `${process.env.BASE_URL}/employee-portal`,
+      }),
+    });
+
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+  } catch (error: any) {
+    console.error("ESOP Grant Error:", error);
+    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
   }
 }

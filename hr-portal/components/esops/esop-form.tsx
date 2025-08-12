@@ -31,6 +31,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 import { waitForTransactionReceipt } from '@wagmi/core'
 import { config } from '@/config';
+import { toast } from 'react-toastify';
 
 const esopSchema = z.object({
   employeeId: z.string().min(1, 'Employee is required'),
@@ -40,9 +41,17 @@ const esopSchema = z.object({
   vestingMonths: z.number().min(1, 'Vesting months must be positive'),
 });
 
+interface ESOPPayload {
+  employeeId: string;
+  totalTokens: number;
+  duration: number;
+  cliff: number;
+  start: number;
+}
+
 interface ESOPFormProps {
   employees: Employee[];
-  onESOPCreated: () => void;
+  onESOPCreated: (payload: ESOPPayload) => Promise<void> | void;
 }
 
 export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
@@ -82,6 +91,8 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
         data.vestingMonths,
         tokenAmountInWei
       );
+
+     
       
       reset();
       setOpen(false);
@@ -90,7 +101,17 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
           hash: tx as `0x${string}`
           
         })
-      onESOPCreated();
+
+         await onESOPCreated({
+      employeeId: data.employeeId,
+      totalTokens: data.tokenAmount,
+      duration: data.vestingMonths,
+      cliff: data.cliffMonths,
+      start: startTime
+    });
+
+    toast.success('ESOP granted successfully');
+
     } catch (error) {
       console.error('Failed to create ESOP:', error);
     } finally {
