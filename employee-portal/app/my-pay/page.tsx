@@ -9,6 +9,7 @@ import { DollarSign, Clock, CheckCircle, AlertCircle, TrendingUp, Calendar } fro
 import { useAccount } from 'wagmi';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
+import { MorphHoleskyTestnet } from '@/config';
 
 export default function MyPayPage() {
   const { isConnected, address } = useAccount();
@@ -49,7 +50,7 @@ export default function MyPayPage() {
   };
 
   const getExplorerLink = (txHash: string) =>
-    `https://etherscan.io/tx/${txHash}`;
+    `${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`;
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -10,6 +10,7 @@ import { DollarSign, TrendingUp, Calendar, Wallet, Gift, Clock, CheckCircle, Ale
 import { useAccount } from 'wagmi';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import { getVestedAmount, getAllVestings, calculateVestingSchedule, weiToEth, formatVestingData } from '@/utils/esopsContractUtils';
+import { MorphHoleskyTestnet } from '@/config';
 
 interface EmployeeDashboardData {
   employee: Employee | null;
@@ -138,7 +139,7 @@ export default function Dashboard() {
 
   // Helper for explorer link
   const getExplorerLink = (txHash: string) =>
-    `https://etherscan.io/tx/${txHash}`;
+    `${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`;
 
   if (loading) {
     return (
