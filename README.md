@@ -1,0 +1,170 @@
+
+# **PayThree – Payroll & ESOPs for the Morph Ecosystem**
+
+
+## **Overview**
+
+
+
+**PayThree** is a next-generation platform built natively for the **Morph ecosystem**, designed to redefine how organizations manage global payroll and ESOPs.
+
+From a single, intuitive dashboard, organizations can **batch-process payouts** in one blockchain transaction, guarantee **on-chain transparency** with every payment verifiable on Morph’s explorer, automate **ESOP vesting**, send **instant email notifications** for payouts and stock option events, and enable **cross-border, bank-free settlements** in seconds all while leveraging Morph’s ultra-scalable, low-fee infrastructure.
+
+With PayThree, payroll isn’t just faster and cheaper  it’s global, verifiable, and built for the next generation of work
+
+## Resources
+
+> **Note:** In the production version, the HR Portal is secured with role-based authentication and wallet verification.  
+> For the **Morph Hackathon demo**, we’ve temporarily kept it open so anyone can explore its features without setup friction.
+
+| Resource | Resource Link |
+|----------|---------------|
+| **GitHub Repository** | [🔗 View on GitHub](https://github.com/preyanshu/paythree) |
+| **HR Portal (Live Demo)** | [🔗 Open HR Portal](https://hrpaythreee-rho.vercel.app/) |
+| **Employee Portal (Live Demo)** | [🔗 Open Employee Portal](https://employeepaythreee.vercel.app/) |
+| **Demo Video** | [🔗 Watch on YouTube](https://youtube.com/your-demo-video) |
+| **MorphScan – ESOP Smart Contract** | [🔗 Contract](https://explorer-holesky.morphl2.io/address/0xE15718AE7Cb4a914194B3F090f3606cdFBE01130) |
+| **MorphScan – Payout Smart Contract** | [🔗Contract](https://explorer-holesky.morphl2.io/address/0x1Db5c1fA42C2899613352B199cDf9d9Aec8e8938?tab=token_transfers) |
+
+
+## **The Problems in Web3 Payroll Today**
+
+-   High gas fees from one-by-one transactions
+    
+-   Wrong wallet addresses causing lost funds
+    
+-   Slow, costly cross-border payments
+    
+-   No real-time employee communication
+    
+-   Lack of ESOP lifecycle management
+
+
+## **PayThree’s Solution**
+
+-   **Batch Payouts** – Pay multiple employees in one blockchain transaction
+    
+-   **Verified Wallets** – Prevent costly payout errors
+    
+-   **On-Chain Transparency** – All payouts verifiable on Etherscan
+    
+-   **Automated ESOP Vesting** – Complete stock option lifecycle on-chain
+    
+-   **Automated Email Notifications** – Instant payout/ESOP alerts to inbox
+    
+-   **Cross-Border, Bank-Free** – Instant blockchain settlement worldwide
+
+
+## **Why PayThree Stands Out from Other Web3 Payment Solutions**
+
+1.  **Full ESOP Support** 
+    
+    -   We’re not just payroll  we handle the entire **stock option lifecycle**, including granting, vesting, and claiming, all on-chain.
+        
+2.  **Seamless Gasless Experience** 
+    
+    -   Using **off-chain endpoints** + meta-transactions, for the minimal gas experience.
+        
+3.  **Smart Contract per Organization** 
+    
+    -   Every org gets its **own deployed smart contract**, isolating funds, improving security, and enabling organization-specific custom logic.
+        
+4.  **Two-Way Communication** 
+    
+    -   Automated emails ensure employees always know when payouts happen  unlike most tools that rely only on blockchain explorers.
+        
+5.  **Integrated Employee Portal** 
+    
+    -   Other tools focus only on admin dashboards PayThree gives employees their **own secure space** to track pay, ESOPs, and notifications.
+
+## **HR Portal – For Organizations**
+
+### **Wallet-First Security**
+
+
+    
+
+### **Employee Management**
+
+-   Add & manage blockchain-linked employee profiles.
+    
+
+### **ESOP Management**
+
+-   Grant, track, and vest ESOPs automatically.
+    
+
+### **Payout Processing**
+
+-   One-click batch payouts with transaction history.
+    
+
+### **Settings & Configurations**
+
+-   Manage org details, token addresses, and payout preferences.
+    
+
+----------
+
+## **Employee Portal – For Employees**
+
+### **Dashboard**
+
+-   View total earnings, upcoming payouts, and ESOP progress.
+    
+
+### **My ESOPs**
+
+-   Track grants, vesting timelines, and claim options.
+    
+
+### **My Pay**
+
+-   View payout history and verify on-chain details.
+
+## **Future Roadmap for Morph**
+
+1.  **AI Payroll Agent** 
+    
+    -   Automates payouts, detects anomalies, optimizes gas usage.
+        
+2.  **Deep Fiat–Crypto Bridge** 
+    
+    -   Seamless on/off-ramp integrations for global salary distribution.
+    
+4.  **Compliance & Tax Automation** 
+    
+    -   Generate jurisdiction-specific payroll & ESOP reports.
+        
+5.  **DeFi-Integrated Payroll** 
+    
+    -   Auto-stake salaries into Morph-native DeFi protocols for passive yield.
+    
+ 6.  **ZK-Powered Privacy Layer**
+
+     -  Use zero-knowledge proofs to verify payouts occurred without revealing individual employee salaries, protecting privacy while maintaining transparency.
+
+# Value to the Morph Ecosystem
+
+PayThree is a flagship utility dApp that amplifies Morph's strengths and drives ecosystem growth.
+
+## 1. Showcasing Morph's Low-Fee, High-Speed Network
+
+Batch payouts and ESOP distributions become near-instant and cost-effective, demonstrating Morph's scalable Layer 2 design for high-volume transactions.
+
+## 2. Driving On-Chain Activity
+
+Every payout, ESOP vesting, and claim increases Morph's daily active users and transaction count, boosting network health metrics that attract developers and investors.
+
+## 3. Expanding Use Cases Beyond DeFi
+
+PayThree introduces HR, payroll, and corporate finance as new categories, broadening Morph's ecosystem diversity and showcasing its versatility.
+
+## 4. Attracting Organizations & Teams to Morph
+
+Companies and DAOs using PayThree naturally onboard employees and contractors onto Morph, expanding the user base organically through payroll adoption.
+
+## 5. Future Integrations that Strengthen Morph's Position
+
+Our roadmap includes AI-powered payroll agents, ZK-based privacy verification, and fiat on/off-ramps all built natively on Morph, cementing it as the go-to chain for Web3 payroll infrastructure.
+
