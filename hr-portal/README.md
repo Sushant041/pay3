@@ -1,4 +1,4 @@
-# PayoutHR - Employee Payout Management
+# PayThree - Employee Payout Management
 
 A comprehensive HR dashboard for managing employee payouts and ESOPs with Ethereum wallet integration.
 

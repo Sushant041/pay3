@@ -68,7 +68,7 @@ export function Sidebar({ className }: SidebarProps) {
               'text-xs text-muted-foreground mt-1',
               collapsed && 'opacity-0 w-0 overflow-hidden'
             )}>
-              Powered by <span className="font-semibold">PayoutHR</span>
+              Powered by <span className="font-semibold">PayThree</span>
             </span>
           </div>
           <div className="space-y-1">

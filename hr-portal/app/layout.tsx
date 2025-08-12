@@ -22,7 +22,7 @@ NProgress.configure({
 });
 
 export const metadata: Metadata = {
-  title: 'PayoutHR - Employee Payout Management',
+  title: 'PayThree - Employee Payout Management',
   description: 'Comprehensive HR dashboard for managing employee payouts and ESOPs',
 };
 

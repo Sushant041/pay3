@@ -20,7 +20,7 @@ if (!projectId) {
 }
 
 const metadata = { 
-  name: "PayoutHR",
+  name: "PayThree",
   description: "Employee Payout Management",
   url: "https://payout-hr.vercel.app", 
   icons: ["https://avatars.githubusercontent.com/u/179229932"]
