@@ -40,7 +40,7 @@ export async function POST(req: Request) {
         durationMonths,
         cliffMonths,
         startDate: startDateFormatted,
-        employeePortalUrl: `${process.env.BASE_URL}/employee-portal`,
+        employeePortalUrl: `${process.env.BASE_URL}`,
       }),
     });
 

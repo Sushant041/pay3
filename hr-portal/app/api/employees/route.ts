@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       email: employee.email,
       walletAddress: employee.walletAddress,
       companyName: companyName,
-      employeePortalUrl: `${process.env.BASE_URL}/employee-portal`, 
+      employeePortalUrl: `${process.env.BASE_URL}`, 
       designation: employee.designation,
       salaryUSD: employee.salaryUSD,
     });
