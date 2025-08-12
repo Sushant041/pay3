@@ -36,10 +36,9 @@ async function sendEmailToEmployee(employeeId: string, name: string, email: stri
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
-    const { txHash, selectedEmployees } = await req.json();
+    const { txHash, payouts } = await req.json();
 
-    // Calculate total payout amount
-    const totalAmount = selectedEmployees.reduce((sum: number, employee: any) => sum + Math.round(employee.salaryUSD), 0);
+    const totalAmount = payouts.reduce((sum: number, p: any) => sum + p.amountUSD, 0);
 
     // Create PayoutBatch
     const batch = await PayoutBatch.create({ txHash, totalAmount });
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
     const payoutDocs = [];
     const settings = await Settings.findOne();
 const companyName = settings?.organizationName || "Your Company";
-    for (const employee of selectedEmployees) {
+    for (const employee of payouts) {
       const { _id, salaryUSD } = employee;
       // Fetch employee details by employeeId (e.g., name and email)
       const employeeData = await Employee.findById(_id);
@@ -76,7 +75,7 @@ const companyName = settings?.organizationName || "Your Company";
       type: 'withdrawal',
       amount: totalAmount,
       currency: 'USD',
-      description: `Payout batch ${batch._id} - ${selectedEmployees.length} employee(s) paid out`,
+      description: `Payout batch ${batch._id} - ${payouts.length} employee(s) paid out`,
       txHash: txHash,
       status: 'completed',
     });
