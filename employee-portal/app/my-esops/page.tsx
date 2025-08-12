@@ -20,6 +20,20 @@ interface ESOPData {
   statusColor: string;
 }
 
+interface VestingData {
+  employee: string;
+  totalAmount: number;
+  claimed: number;
+  start: number;
+  cliff: number;
+  duration: number;
+  vestedAmount: number;
+  unvestedAmount: number;
+  cliffReached: boolean;
+  fullyVested: boolean;
+  claimableAmount: number;
+}
+
 export default function MyESOPsPage() {
   const { isConnected, address } = useAccount();
   const [esopData, setEsopData] = useState<ESOPData | null>(null);
@@ -33,60 +47,77 @@ export default function MyESOPsPage() {
     }
   }, [isConnected, address]);
 
-  const loadMyESOPs = async () => {
+    const loadVestingsFromContract = async (): Promise<VestingData[]> => {
     try {
-      setLoading(true);
-      setError(null);
-
-      // Get all vestings and filter for current user
       const [employeeAddresses, vestingData] = await getAllVestings();
-
-      console.log("employeeAddresses", employeeAddresses);
-      console.log("vestingData", vestingData);  
+      const formattedVestings: VestingData[] = [];
       
-      // Find current user's vesting data
-      const userIndex = employeeAddresses.findIndex((addr: string) => addr.toLowerCase() === address!.toLowerCase());
-      
-      if (userIndex === -1) {
-        setError('No ESOP allocation found');
-        setLoading(false);
-        return;
+      for (let i = 0; i < employeeAddresses.length; i++) {
+        const employeeAddress = employeeAddresses[i];
+        const vesting = vestingData[i];
+        
+        if (vesting && employeeAddress !== '0x0000000000000000000000000000000000000000') {
+          const formatted = formatVestingData(vesting);
+          if (formatted) {
+            formattedVestings.push({
+              employee: employeeAddress,
+              ...formatted
+            });
+          }
+        }
       }
-
-      const userVestingRaw = vestingData[userIndex];
-      console.log("userVestingRaw", userVestingRaw);
-      const formattedVestingData = formatVestingData(userVestingRaw);
-      console.log("formattedVestingData", formattedVestingData);
-
-      if (!formattedVestingData) {
-        setError('No ESOP allocation found');
-        setLoading(false);
-        return;
-      }
-
-      const vestedAmount = weiToEth(Number(formattedVestingData.vestedAmount));
-      const totalAmount = weiToEth(Number(formattedVestingData.totalAmount));
-      const claimableAmount = weiToEth(Number(formattedVestingData.claimableAmount)) || 0;
-      const vestingProgress = totalAmount > 0 ? (vestedAmount / totalAmount) * 100 : 0;
-
-      const status = getVestingStatus(formattedVestingData);
       
-      setEsopData({
-        vestedAmount,
-        totalAmount,
-        claimableAmount,
-        vestingData: formattedVestingData,
-        vestingProgress: Math.round(vestingProgress),
-        status: status.status,
-        statusColor: status.color
-      });
+      return formattedVestings;
     } catch (error) {
-      console.error('Failed to load ESOP data:', error);
-      setError('Failed to load ESOP data');
-    } finally {
-      setLoading(false);
+      console.error('Error loading vestings from contract:', error);
+      return [];
     }
   };
+
+ const loadMyESOPs = async () => {
+  try {
+    setLoading(true);
+    setError(null);
+
+    const vestings = await loadVestingsFromContract();
+    console.log("All Vestings:", vestings);
+
+    // Find current user's vesting data
+    const myVesting = vestings.find(
+      (v) => v.employee.toLowerCase() === address!.toLowerCase()
+    );
+
+    if (!myVesting) {
+      setError('No ESOP allocation found');
+      setLoading(false);
+      return;
+    }
+
+    const vestedAmount = weiToEth(Number(myVesting.vestedAmount));
+    const totalAmount = weiToEth(Number(myVesting.totalAmount));
+    const claimableAmount = weiToEth(Number(myVesting.claimableAmount)) || 0;
+    const vestingProgress =
+      totalAmount > 0 ? (vestedAmount / totalAmount) * 100 : 0;
+
+    const status = getVestingStatus(myVesting);
+
+    setEsopData({
+      vestedAmount,
+      totalAmount,
+      claimableAmount,
+      vestingData: myVesting,
+      vestingProgress: Math.round(vestingProgress),
+      status: status.status,
+      statusColor: status.color,
+    });
+  } catch (error) {
+    console.error('Failed to load ESOP data:', error);
+    setError('Failed to load ESOP data');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const getVestingStatus = (vestingData: any) => {
     const now = Math.floor(Date.now() / 1000);

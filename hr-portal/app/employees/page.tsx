@@ -49,8 +49,28 @@ export default function EmployeesPage() {
       console.error('Failed to load employees:', error);
     } finally {
       setLoading(false);
+
     }
   };
+
+  const loadDashboardData = async () => {
+  try {
+    setLoading(true);
+
+    const [balance, employeeList] = await Promise.all([
+      getTreasuryBalanceUSD(),
+      employeeApi.getAll(),
+    ]);
+
+    setTreasuryBalance(balance);
+    setEmployees(employeeList);
+  } catch (error) {
+    console.error('Error loading dashboard data:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleEmployeeSelect = (employeeId: string, selected: boolean) => {
     if (selected) {
@@ -68,8 +88,8 @@ export default function EmployeesPage() {
     }
   };
 
-  const selectedEmployeeData = employees?.filter(emp => selectedEmployees.includes(emp._id));
-  const totalSelectedSalary = selectedEmployeeData?.reduce((sum, emp) => sum + emp.salaryUSD, 0);
+  const selectedEmployeeData = employees.filter(emp => selectedEmployees.includes(emp._id));
+  const totalSelectedSalary = selectedEmployeeData.reduce((sum, emp) => sum + emp.salaryUSD, 0);
   const hasInsufficientBalance = totalSelectedSalary > treasuryBalance;
 
   const payAllEmployees = () => {
@@ -139,13 +159,13 @@ export default function EmployeesPage() {
         <div className="flex items-center space-x-2">
           <DollarSign className="h-5 w-5 text-primary" />
           <span className="font-medium">
-            Total monthly: ${totalSelectedSalary?.toLocaleString()}
+            Total monthly: ${totalSelectedSalary.toLocaleString()}
           </span>
         </div>
         <div className="flex items-center space-x-2">
           <Wallet className="h-5 w-5 text-primary" />
           <span className="font-medium">
-            Treasury: ${treasuryBalance?.toLocaleString()}
+            Treasury: ${treasuryBalance.toLocaleString()}
           </span>
         </div>
       </div>
@@ -168,7 +188,7 @@ export default function EmployeesPage() {
             ) : (
               <PayoutForm
                 selectedEmployees={selectedEmployeeData}
-                onPayoutCreated={loadEmployees}
+                onPayoutCreated={loadDashboardData}
                 onClearSelection={() => setSelectedEmployees([])}
               />
             )}

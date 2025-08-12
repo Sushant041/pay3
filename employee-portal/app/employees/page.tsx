@@ -49,8 +49,28 @@ export default function EmployeesPage() {
       console.error('Failed to load employees:', error);
     } finally {
       setLoading(false);
+
     }
   };
+
+  const loadDashboardData = async () => {
+  try {
+    setLoading(true);
+
+    const [balance, employeeList] = await Promise.all([
+      getTreasuryBalanceUSD(),
+      employeeApi.getAll(),
+    ]);
+
+    setTreasuryBalance(balance);
+    setEmployees(employeeList);
+  } catch (error) {
+    console.error('Error loading dashboard data:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleEmployeeSelect = (employeeId: string, selected: boolean) => {
     if (selected) {
@@ -168,7 +188,7 @@ export default function EmployeesPage() {
             ) : (
               <PayoutForm
                 selectedEmployees={selectedEmployeeData}
-                onPayoutCreated={loadEmployees}
+                onPayoutCreated={loadDashboardData}
                 onClearSelection={() => setSelectedEmployees([])}
               />
             )}
