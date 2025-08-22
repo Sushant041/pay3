@@ -79,12 +79,12 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
 
       // Convert date to timestamp
       const startTime = Math.floor(new Date(data.vestingStart).getTime() / 1000);
-      
+
       // Convert ETH to wei
       const tokenAmountInWei = ethToWei(data.tokenAmount);
-      
+
       // Call the smart contract
-      const tx= await addEmployeeToESOP(
+      const tx = await addEmployeeToESOP(
         employee.walletAddress,
         startTime,
         data.cliffMonths,
@@ -92,27 +92,27 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
         tokenAmountInWei
       );
 
-     
-      
-    
+
+
+
       // await tx.wait();
       const receipt = await waitForTransactionReceipt(config, {
-          hash: tx as `0x${string}`
-          
-        })
-console.log('Transaction receipt:', receipt);
-         await onESOPCreated({
-      employeeId: data.employeeId,
-      totalTokens: data.tokenAmount,
-      duration: data.vestingMonths,
-      cliff: data.cliffMonths,
-      start: startTime
-    });
-     
+        hash: tx as `0x${string}`
+
+      })
+      console.log('Transaction receipt:', receipt);
+      await onESOPCreated({
+        employeeId: data.employeeId,
+        totalTokens: data.tokenAmount,
+        duration: data.vestingMonths,
+        cliff: data.cliffMonths,
+        start: startTime
+      });
+
 
       reset();
       setOpen(false);
-    toast.success('ESOP granted successfully');
+      toast.success('ESOP granted successfully');
 
     } catch (error) {
       console.error('Failed to create ESOP:', error);
@@ -139,7 +139,7 @@ console.log('Transaction receipt:', receipt);
             Grant equity stock options to an employee with vesting schedule.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           <div className="grid grid-cols-2 gap-4">
             {/* Employee Selection Section */}
@@ -149,7 +149,7 @@ console.log('Transaction receipt:', receipt);
                   <User className="h-3 w-3 text-primary" />
                   <h3 className="text-xs font-semibold">Employee Selection</h3>
                 </div>
-                
+
                 <div className="space-y-1">
                   <Label htmlFor="employeeId" className="text-xs font-medium">Select Employee</Label>
                   <Select onValueChange={(value) => setValue('employeeId', value)}>
@@ -178,7 +178,7 @@ console.log('Transaction receipt:', receipt);
                   <Award className="h-3 w-3 text-primary" />
                   <h3 className="text-xs font-semibold">Token Allocation</h3>
                 </div>
-                
+
                 <div className="space-y-1">
                   <Label htmlFor="tokenAmount" className="text-xs font-medium">Token Amount (ETH)</Label>
                   <Input
@@ -207,7 +207,7 @@ console.log('Transaction receipt:', receipt);
                 <Calendar className="h-3 w-3 text-primary" />
                 <h3 className="text-xs font-semibold">Vesting Schedule</h3>
               </div>
-              
+
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <Label htmlFor="vestingStart" className="text-xs font-medium">Start Date</Label>
@@ -263,17 +263,17 @@ console.log('Transaction receipt:', receipt);
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-1">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setOpen(false)}
               className="flex-1 h-8 text-sm"
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              className="flex-1 h-8 text-sm" 
+            <Button
+              type="submit"
+              className="flex-1 h-8 text-sm"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

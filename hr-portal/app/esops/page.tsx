@@ -20,6 +20,7 @@ import {
 } from '@/utils/esopsContractUtils';
 import { waitForTransactionReceipt} from '@wagmi/core';
 import { config } from '@/config';
+import { CreateVesting } from '@/utils/splitter';
 
 interface VestingData {
   employee: string;
@@ -153,6 +154,9 @@ export default function ESOPsPage() {
             Grant and track employee stock option plans.
           </p>
         </div>
+        <Button onClick={CreateVesting}>
+          Test vesting
+        </Button>
         <ESOPForm employees={employees} onESOPCreated={handleESOPCreated} />
       </div>
 

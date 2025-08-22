@@ -13,80 +13,41 @@ export function WalletConnect({ onConnect }: WalletConnectProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const connectWallet = async () => {
-    setIsConnecting(true);
-    setError(null);
-    
-    try {
-      // Check if MetaMask is installed
-      if (typeof window.ethereum === 'undefined') {
-        setError('MetaMask is not installed. Please install MetaMask to continue.');
-        setIsConnecting(false);
-        return;
-      }
+const connectWallet = async () => {
+  setIsConnecting(true);
+  setError(null);
 
-      // Request account access
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      });
-
-      if (accounts && accounts.length > 0) {
-        // Check if we're on the correct network (Ethereum mainnet)
-        const chainId = await window.ethereum.request({
-          method: 'eth_chainId',
-        });
-
-        if (chainId !== '0x1') { // Ethereum mainnet
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: '0x1' }],
-            });
-          } catch (switchError: any) {
-            if (switchError.code === 4902) {
-              // Network not added, try to add it
-              try {
-                await window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
-                  params: [{
-                    chainId: '0x1',
-                    chainName: 'Ethereum Mainnet',
-                    nativeCurrency: {
-                      name: 'Ether',
-                      symbol: 'ETH',
-                      decimals: 18,
-                    },
-                    rpcUrls: ['https://mainnet.infura.io/v3/'],
-                    blockExplorerUrls: ['https://etherscan.io/'],
-                  }],
-                });
-              } catch (addError) {
-                setError('Please switch to Ethereum Mainnet in your wallet.');
-                setIsConnecting(false);
-                return;
-              }
-            } else {
-              setError('Please switch to Ethereum Mainnet in your wallet.');
-              setIsConnecting(false);
-              return;
-            }
-          }
-        }
-
-        // Store wallet info in localStorage
-        localStorage.setItem('walletConnected', 'true');
-        localStorage.setItem('walletAddress', accounts[0]);
-        
-        onConnect();
-      } else {
-        setError('No accounts found. Please connect your wallet.');
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to connect wallet. Please try again.');
-    } finally {
+  try {
+    // Check if Keplr is installed
+    if (!window.keplr) {
+      setError('Keplr Wallet is not installed. Please install it to continue.');
       setIsConnecting(false);
+      return;
     }
-  };
+
+    // Enable Andromeda chain (testnet or mainnet)
+    const chainId = "andromeda-testnet"; // or "andromeda-mainnet"
+    await window.keplr.enable(chainId);
+
+    // Get signer
+    const offlineSigner = window.getOfflineSigner(chainId);
+    const accounts = await offlineSigner.getAccounts();
+
+    if (accounts && accounts.length > 0) {
+      // Store wallet info in localStorage
+      localStorage.setItem('walletConnected', 'true');
+      localStorage.setItem('walletAddress', accounts[0].address);
+
+      onConnect();
+    } else {
+      setError('No accounts found. Please connect your wallet.');
+    }
+  } catch (err) {
+    setError(err.message || 'Failed to connect wallet. Please try again.');
+  } finally {
+    setIsConnecting(false);
+  }
+};s
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

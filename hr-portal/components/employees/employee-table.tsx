@@ -84,7 +84,7 @@ export function EmployeeTable({
                 <div className="flex items-center">
                   <DollarSign className="mr-1 h-4 w-4 text-primary" />
                   <span className="font-medium">
-                    ${(employee.salaryUSD).toLocaleString()}/month
+                    Andr{(employee.salaryUSD).toLocaleString()}/month
                   </span>
                 </div>
               </TableCell>

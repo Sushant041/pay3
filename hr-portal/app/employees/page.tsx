@@ -11,12 +11,15 @@ import { Employee } from '@/types';
 import { Users, DollarSign, AlertTriangle, Wallet } from 'lucide-react';
 import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
 import { useAccount } from 'wagmi';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
+import { ExecuteSplitter } from '@/utils/splitter';
+import { useWalletContext } from '@/context';
 
 export default function EmployeesPage() {
-  const { isConnected } = useAccount();
+  // const { isConnected } = useAccount();
+  const { isConnected, Address } = useWalletContext();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,23 +57,23 @@ export default function EmployeesPage() {
   };
 
   const loadDashboardData = async () => {
-  try {
-    setLoading(true);
-    setSelectedEmployees([]);
+    try {
+      setLoading(true);
+      setSelectedEmployees([]);
 
-    const [balance, employeeList] = await Promise.all([
-      getTreasuryBalanceUSD(),
-      employeeApi.getAll(),
-    ]);
+      const [balance, employeeList] = await Promise.all([
+        getTreasuryBalanceUSD(),
+        employeeApi.getAll(),
+      ]);
 
-    setTreasuryBalance(balance);
-    setEmployees(employeeList);
-  } catch (error) {
-    console.error('Error loading dashboard data:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+      setTreasuryBalance(balance);
+      setEmployees(employeeList);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const handleEmployeeSelect = (employeeId: string, selected: boolean) => {
@@ -94,7 +97,7 @@ export default function EmployeesPage() {
   const hasInsufficientBalance = totalSelectedSalary > treasuryBalance;
 
   const payAllEmployees = () => {
-    setSelectedEmployees(employees.map(emp => emp._id));
+    setSelectedEmployees(employees.map((emp) => emp._id));
   };
 
   if (loading) {
@@ -112,6 +115,36 @@ export default function EmployeesPage() {
       </div>
     );
   }
+  const handleSplitter = async () => {
+  if (!Address || !isConnected) {
+    console.log("connect wallet");
+    return;
+  }
+
+  try {
+    const totalSalary = selectedEmployeeData.reduce(
+      (sum, emp) => sum + emp.salaryUSD,
+      0
+    );
+
+    const Recipients = selectedEmployeeData.map((emp) => ({
+      address: emp.walletAddress,
+      percent: (emp.salaryUSD / totalSalary).toFixed(2),
+    }));
+
+    const startTime = Date.now();
+    const new_tx = await ExecuteSplitter(
+      totalSalary.toFixed(2),
+      Recipients
+    );
+
+    const endTime = Date.now();
+    const processingTimeMs = endTime - startTime;
+    console.log(new_tx, processingTimeMs);
+  } catch (error) {
+    console.error("Error executing splitter:", error);
+  }
+};
 
   return (
     <div className="flex-1 space-y-8 p-8 min-h-screen">
@@ -127,82 +160,83 @@ export default function EmployeesPage() {
           <Button variant="outline" onClick={payAllEmployees}>
             Select All for Payout
           </Button>
+          <Button variant="outline" onClick={handleSplitter}>
+            Execute Split
+          </Button>
         </div>
       </div>
 
       <Card
-  className={`border-primary/20 ${
-    hasInsufficientBalance ? 'bg-red-100 border-red-200' : 'bg-primary/5'
-  }`}
->
-  <CardContent className="p-6 space-y-4">
-    {/* Warning Message at Top Left */}
-    {hasInsufficientBalance && (
-      <div className="flex items-center space-x-2 text-red-700">
-        <AlertTriangle className="h-5 w-5" />
-        <span className="text-sm font-medium">Insufficient Balance</span>
-      </div>
-    )}
-
-    {/* Employees, total, treasury */}
-    <div className="flex items-center justify-between">
-      <div
-        className={`flex items-center space-x-6 ${
-          hasInsufficientBalance ? 'text-gray-800' : 'text-foreground'
-        }`}
+        className={`border-primary/20 ${hasInsufficientBalance ? 'bg-red-100 border-red-200' : 'bg-primary/5'
+          }`}
       >
-        <div className="flex items-center space-x-2">
-          <Users className="h-5 w-5 text-primary" />
-          <span className="font-medium">
-            {selectedEmployees.length} employees selected
-          </span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <DollarSign className="h-5 w-5 text-primary" />
-          <span className="font-medium">
-            Total monthly: ${totalSelectedSalary.toLocaleString()}
-          </span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Wallet className="h-5 w-5 text-primary" />
-          <span className="font-medium">
-            Treasury: ${treasuryBalance.toLocaleString()}
-          </span>
-        </div>
-      </div>
+        <CardContent className="p-6 space-y-4">
+          {/* Warning Message at Top Left */}
+          {hasInsufficientBalance && (
+            <div className="flex items-center space-x-2 text-red-700">
+              <AlertTriangle className="h-5 w-5" />
+              <span className="text-sm font-medium">Insufficient Balance</span>
+            </div>
+          )}
 
-      {/* Buttons / Payout */}
-      <div className="flex items-center space-x-4">
-        {selectedEmployees.length > 0 ? (
-          <>
-            <Button variant="outline" onClick={() => setSelectedEmployees([])} className="bg-red-500 hover:bg-red-600">
-              Clear Selection
-            </Button>
+          {/* Employees, total, treasury */}
+          <div className="flex items-center justify-between">
+            <div
+              className={`flex items-center space-x-6 ${hasInsufficientBalance ? 'text-gray-800' : 'text-foreground'
+                }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Users className="h-5 w-5 text-primary" />
+                <span className="font-medium">
+                  {selectedEmployees.length} employees selected
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <DollarSign className="h-5 w-5 text-primary" />
+                <span className="font-medium">
+                  Total monthly: Andr{totalSelectedSalary.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Wallet className="h-5 w-5 text-primary" />
+                <span className="font-medium">
+                  Treasury: Andr{treasuryBalance.toLocaleString()}
+                </span>
+              </div>
+            </div>
 
-            {hasInsufficientBalance ? (
-              <Link href="/treasury">
-                <Button className="bg-green-600 hover:bg-green-700">
-                  <Wallet className="mr-2 h-4 w-4" />
-                  Fund Treasury
-                </Button>
-              </Link>
-            ) : (
-              <PayoutForm
-                selectedEmployees={selectedEmployeeData}
-                onPayoutCreated={loadDashboardData}
-                onClearSelection={() => setSelectedEmployees([])}
-              />
-            )}
-          </>
-        ) : (
-          <span className="text-sm text-muted-foreground">
-            Select employees to process payouts
-          </span>
-        )}
-      </div>
-    </div>
-  </CardContent>
-</Card>
+            {/* Buttons / Payout */}
+            <div className="flex items-center space-x-4">
+              {selectedEmployees.length > 0 ? (
+                <>
+                  <Button variant="outline" onClick={() => setSelectedEmployees([])} className="bg-red-500 hover:bg-red-600">
+                    Clear Selection
+                  </Button>
+
+                  {hasInsufficientBalance ? (
+                    <Link href="/treasury">
+                      <Button className="bg-green-600 hover:bg-green-700">
+                        <Wallet className="mr-2 h-4 w-4" />
+                        Fund Treasury
+                      </Button>
+                    </Link>
+                  ) : (
+                    <PayoutForm
+                      selectedEmployees={selectedEmployeeData}
+                      onPayoutCreated={loadDashboardData}
+                      onClearSelection={() => setSelectedEmployees([])}
+                    />
+                  )}
+                </>
+              ) : (
+                <span className="text-sm text-muted-foreground">
+                  Select employees to process payouts
+                </span>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
 
 

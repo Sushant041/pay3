@@ -11,14 +11,16 @@ import { formatUnits } from 'viem';
 import { config } from '@/config';
 import { getBalance} from "@/utils/mockUSDCUtils"
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useWalletContext } from '@/context';
 
 export function BalanceDisplay() {
-  const { address, isConnected } = useAccount();
+  // const { address, isConnected } = useAccount();
+  const { Address, isConnected} = useWalletContext()
   const [usdcBalance, setUsdcBalance] = useState<string>('0');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isConnected || !address) {
+    if (!isConnected || !Address) {
       setLoading(false);
       return;
     }
@@ -30,7 +32,7 @@ export function BalanceDisplay() {
         // setLoading(true);
   
         // Get USDC balance
-        const usdcBalance = await getBalance(address);
+        const usdcBalance = await getBalance(Address);
         const formattedBalance = Number(formatUnits(BigInt(usdcBalance), 18));
         console.log('USDC Balance:', formattedBalance);
         setUsdcBalance(formattedBalance.toString());
@@ -50,7 +52,7 @@ export function BalanceDisplay() {
   
     // Cleanup on unmount or dependency change
     return () => clearInterval(intervalId);
-  }, [address, isConnected]);
+  }, [Address, isConnected]);
   
 
   if (!isConnected) {

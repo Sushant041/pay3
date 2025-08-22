@@ -25,6 +25,7 @@ import { config } from '@/config';
 import { LoadingSpinner, LoadingDots } from '@/components/ui/loading-spinner';
 import { MorphHoleskyTestnet } from '@/config';
 import { parseUnits } from 'viem';
+import { useWalletContext } from '@/context';
 
 interface PayoutFormProps {
   selectedEmployees: Employee[];
@@ -33,7 +34,7 @@ interface PayoutFormProps {
 }
 
 export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelection }: PayoutFormProps) {
-  const { isConnected } = useAccount();
+  const { isConnected } = useWalletContext();
   const [open, setOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -70,7 +71,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
     }
 
     setIsProcessing(true);
-    
+
 
     try {
       // Prepare employee addresses and amounts
@@ -82,10 +83,10 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       // Execute batch pay transaction
       const startTime = Date.now();
       const tx = await batchPayEmployees(employeeAddresses, amounts);
-      
+
       const endTime = Date.now();
       const processingTimeMs = endTime - startTime;
-      
+
       setTxHash(tx || 'Transaction completed');
       setProcessingTime(Math.round(processingTimeMs / 1000));
 
@@ -94,17 +95,17 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       try {
         const receipt = await waitForTransactionReceipt(config, {
           hash: tx as `0x${string}`,
-          confirmations :3
-          
+          confirmations: 3
+
         });
-        
+
         const confirmationEndTime = Date.now();
         const confirmationTimeMs = confirmationEndTime - confirmationStartTime;
         setConfirmationTime(confirmationTimeMs / 1000);
-        
+
         const gasUsed = receipt.gasUsed?.toString() || 'Unknown';
         setGasUsed(`${gasUsed} gas`);
-        
+
         // Only show completion after 10 confirmations
         setIsCompleted(true);
       } catch (receiptError) {
@@ -128,7 +129,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
 
       toast.success('Payout completed successfully!');
 
-      
+
       // Don't auto-close the modal - let user close it manually
       // Don't call onClearSelection() here as it might cause the modal to close
       // Only call onPayoutCreated() to refresh the data
@@ -197,9 +198,9 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
 
           {!isCompleted ? (
             <div className="space-y-4">
-              <Button 
-                onClick={handlePayout} 
-                className="w-full h-12 text-lg font-semibold" 
+              <Button
+                onClick={handlePayout}
+                className="w-full h-12 text-lg font-semibold"
                 disabled={isProcessing || hasInsufficientBalance}
                 size="lg"
               >
@@ -215,7 +216,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
                   </>
                 )}
               </Button>
-              
+
               {isProcessing && (
                 <div className="text-center space-y-2">
                   <p className="text-sm text-muted-foreground">
@@ -254,7 +255,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
                     </div>
                   </div>
                   <div className="pt-2">
-                    <a 
+                    <a
                       href={`${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -267,7 +268,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
               </Card>
 
               <div className="flex justify-center">
-                <Button 
+                <Button
                   onClick={() => {
                     setOpen(false);
                     setIsCompleted(false);

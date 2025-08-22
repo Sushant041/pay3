@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@andromedaprotocol/andromeda.js": "^2.0.0",
+    "@cosmos-kit/core": "^2.16.3",
+    "@cosmos-kit/cosmostation": "^2.15.3",
+    "@cosmos-kit/keplr": "^2.15.3",
+    "@cosmos-kit/leap": "^2.15.3",
+    "@cosmos-kit/react": "^2.22.3",
     "@hookform/resolvers": "^3.9.0",
     "@next/swc-wasm-nodejs": "13.5.1",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -47,6 +53,7 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
+    "chain-registry": "^2.0.46",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
