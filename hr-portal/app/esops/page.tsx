@@ -145,6 +145,11 @@ export default function ESOPsPage() {
     );
   }
 
+  const handleVestingCreation = async() => {
+      //  if()
+      await CreateVesting("test n2");
+  }
+
   return (
     <div className="flex-1 space-y-8 p-8 min-h-screen">
       <div className="flex items-center justify-between">
@@ -154,7 +159,7 @@ export default function ESOPsPage() {
             Grant and track employee stock option plans.
           </p>
         </div>
-        <Button onClick={CreateVesting}>
+        <Button onClick={handleVestingCreation}>
           Test vesting
         </Button>
         <ESOPForm employees={employees} onESOPCreated={handleESOPCreated} />

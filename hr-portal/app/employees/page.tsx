@@ -134,8 +134,9 @@ export default function EmployeesPage() {
 
     const startTime = Date.now();
     const new_tx = await ExecuteSplitter(
-      totalSalary.toFixed(2),
-      Recipients
+      // totalSalary.toFixed(2),
+      "20000000"
+      // Recipients
     );
 
     const endTime = Date.now();

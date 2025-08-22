@@ -13,7 +13,8 @@ const TESTNET_CONFIG = {
   defaultFee: "0.025uandr",
 };
 
-const ContractAddress = "andr1uarvqvslsg37nkpzkyrntszkad2z7xjleazvw4nalx8h5nqcjjyqrjeff6";
+const SplitterContractAddress = "andr1uarvqvslsg37nkpzkyrntszkad2z7xjleazvw4nalx8h5nqcjjyqrjeff6";
+const KernelAddress = "andr16meeuvwey03jvq26g2gvtpz42zak72hrtw3cpdqha8g64duav88qgs46r7";
 
 /**
  * Connects to Keplr & initializes an Andromeda ChainClient
@@ -105,7 +106,7 @@ export const ExecuteSplitter = async (
     const funds = [{ denom: "uandr", amount }];
 
     const result = await client.execute(
-      ContractAddress,
+      SplitterContractAddress,
       msg,
       "auto",
       "",
@@ -121,23 +122,71 @@ export const ExecuteSplitter = async (
   }
 };
 
-export const CreateVesting = async () => {
+
+function getAdoAddressByCodeId(
+  txResponse: any,
+  codeId: string
+): string {
+  for (const event of txResponse.events) {
+    if (event.type === "instantiate") {
+      const codeAttr = event.attributes.find(
+        (attr:any) => attr.key === "code_id"
+      );
+      const addrAttr = event.attributes.find(
+        (attr:any) => attr.key === "_contract_address"
+      );
+      if (codeAttr?.value === codeId && addrAttr) {
+        return addrAttr.value;
+      }
+    }
+  }
+  return "";
+}
+
+
+
+export const ExecuteVesting = async (VestingContractAddress: string, amount: string, lockup_duration: string, release_duration: string, funds: string) => {
+  try {
+    const client = await initAndromedaClient();
+    const msg: Msg = {
+      create_batch: {
+        release_amount: {
+          amount: "20000000",
+        },
+        lockup_duration: 60000,
+        release_duration: 10000,
+      }
+    };
+
+    const res = await client.execute(
+      VestingContractAddress, // contract address
+      msg,
+      "auto",          // or specify gas amount
+      "Create Vesting Batch", // optional memo
+      [{ denom: "uandr", amount: "20000000" }] // funds being sent
+    );
+
+    console.log(res);
+  } catch (error) {
+    console.log(error, "Error creating vesting for contract address", VestingContractAddress);
+  }
+}
+
+export const CreateVesting = async (Name: string, EmployeeAddress: string, amount: string, lockup_duration: string, release_duration: string, funds: string) => {
   try {
     const client = await initAndromedaClient();
     const componentData = {
-      kernel_address: "andr16meeuvwey03jvq26g2gvtpz42zak72hrtw3cpdqha8g64duav88qgs46r7",
+      kernel_address: KernelAddress,
       recipient: {
         msg: null,
         ibc_recovery_address: null,
-        address: "andr19tm02vzdeg44rjh3q9kg5p6tthzvrr5aespc7w", //address for dynamic vesting cotract
+        address: "andr19tm02vzdeg44rjh3q9kg5p6tthzvrr5aespc7w", //Employee address for dynamic vesting cotract
       },
       denom: "uandr",
     };
 
-    console.log(btoa(JSON.stringify(componentData)))
-
     const msg: Msg = {
-      name: "new vesting",
+      name: "hi1",
       app_components: [
         {
           name: "vesting-0",
@@ -150,15 +199,16 @@ export const CreateVesting = async () => {
       chain_info: [],
       kernel_address: "andr16meeuvwey03jvq26g2gvtpz42zak72hrtw3cpdqha8g64duav88qgs46r7",
     };
-
-
     const res = await client.instantiate(
       2364,
       msg,
       'ANDR - Instantiate'
     )
     console.log(res);
+    const adoAddress = getAdoAddressByCodeId(res, "2387");
+    const tx = await ExecuteVesting(adoAddress, amount, lockup_duration, release_duration, funds);
+    console.log(tx);
   } catch (error) {
-    console.log(error);
+    console.log(error, "Error assigning esops for user", EmployeeAddress);
   }
 }
