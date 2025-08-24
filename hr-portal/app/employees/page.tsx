@@ -10,7 +10,6 @@ import { employeeApi } from '@/lib/api';
 import { Employee } from '@/types';
 import { Users, DollarSign, AlertTriangle, Wallet } from 'lucide-react';
 import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
-import { useAccount } from 'wagmi';
 // import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
@@ -29,20 +28,20 @@ export default function EmployeesPage() {
     loadEmployees();
   }, []);
 
-  useEffect(() => {
-    if (isConnected) {
-      loadTreasuryBalance();
-    }
-  }, [isConnected]);
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     loadTreasuryBalance();
+  //   }
+  // }, [isConnected]);
 
-  const loadTreasuryBalance = async () => {
-    try {
-      const balance = await getTreasuryBalanceUSD();
-      setTreasuryBalance(balance);
-    } catch (error) {
-      console.error('Error loading treasury balance:', error);
-    }
-  };
+  // const loadTreasuryBalance = async () => {
+  //   try {
+  //     const balance = await getTreasuryBalanceUSD();
+  //     setTreasuryBalance(balance);
+  //   } catch (error) {
+  //     console.error('Error loading treasury balance:', error);
+  //   }
+  // };
 
   const loadEmployees = async () => {
     try {
@@ -61,12 +60,12 @@ export default function EmployeesPage() {
       setLoading(true);
       setSelectedEmployees([]);
 
-      const [balance, employeeList] = await Promise.all([
-        getTreasuryBalanceUSD(),
+      const [employeeList] = await Promise.all([
+        // getTreasuryBalanceUSD(),
         employeeApi.getAll(),
       ]);
 
-      setTreasuryBalance(balance);
+      // setTreasuryBalance(balance);
       setEmployees(employeeList);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -94,7 +93,7 @@ export default function EmployeesPage() {
 
   const selectedEmployeeData = employees.filter(emp => selectedEmployees.includes(emp._id));
   const totalSelectedSalary = selectedEmployeeData.reduce((sum, emp) => sum + emp.salaryUSD, 0);
-  const hasInsufficientBalance = totalSelectedSalary > treasuryBalance;
+  // const hasInsufficientBalance = totalSelectedSalary > treasuryBalance;
 
   const payAllEmployees = () => {
     setSelectedEmployees(employees.map((emp) => emp._id));
@@ -115,37 +114,6 @@ export default function EmployeesPage() {
       </div>
     );
   }
-  const handleSplitter = async () => {
-  if (!Address || !isConnected) {
-    console.log("connect wallet");
-    return;
-  }
-
-  try {
-    const totalSalary = selectedEmployeeData.reduce(
-      (sum, emp) => sum + emp.salaryUSD,
-      0
-    );
-
-    const Recipients = selectedEmployeeData.map((emp) => ({
-      address: emp.walletAddress,
-      percent: (emp.salaryUSD / totalSalary).toFixed(2),
-    }));
-
-    const startTime = Date.now();
-    const new_tx = await ExecuteSplitter(
-      // totalSalary.toFixed(2),
-      "20000000"
-      // Recipients
-    );
-
-    const endTime = Date.now();
-    const processingTimeMs = endTime - startTime;
-    console.log(new_tx, processingTimeMs);
-  } catch (error) {
-    console.error("Error executing splitter:", error);
-  }
-};
 
   return (
     <div className="flex-1 space-y-8 p-8 min-h-screen">
@@ -161,29 +129,29 @@ export default function EmployeesPage() {
           <Button variant="outline" onClick={payAllEmployees}>
             Select All for Payout
           </Button>
-          <Button variant="outline" onClick={handleSplitter}>
+          {/* <Button variant="outline" onClick={handleSplitter}>
             Execute Split
-          </Button>
+          </Button> */}
         </div>
       </div>
 
       <Card
-        className={`border-primary/20 ${hasInsufficientBalance ? 'bg-red-100 border-red-200' : 'bg-primary/5'
+        className={`border-primary/20 ${'bg-primary/5'
           }`}
       >
         <CardContent className="p-6 space-y-4">
           {/* Warning Message at Top Left */}
-          {hasInsufficientBalance && (
+          {/* {hasInsufficientBalance && (
             <div className="flex items-center space-x-2 text-red-700">
               <AlertTriangle className="h-5 w-5" />
               <span className="text-sm font-medium">Insufficient Balance</span>
             </div>
-          )}
+          )} */}
 
           {/* Employees, total, treasury */}
           <div className="flex items-center justify-between">
             <div
-              className={`flex items-center space-x-6 ${hasInsufficientBalance ? 'text-gray-800' : 'text-foreground'
+              className={`flex items-center space-x-6 ${ 'text-foreground'
                 }`}
             >
               <div className="flex items-center space-x-2">
@@ -214,20 +182,21 @@ export default function EmployeesPage() {
                     Clear Selection
                   </Button>
 
-                  {hasInsufficientBalance ? (
+                  {/* {hasInsufficientBalance ? (
                     <Link href="/treasury">
                       <Button className="bg-green-600 hover:bg-green-700">
                         <Wallet className="mr-2 h-4 w-4" />
                         Fund Treasury
                       </Button>
                     </Link>
-                  ) : (
+                  ) : ( */}
+                  
                     <PayoutForm
                       selectedEmployees={selectedEmployeeData}
                       onPayoutCreated={loadDashboardData}
                       onClearSelection={() => setSelectedEmployees([])}
                     />
-                  )}
+                  {/* )} */}
                 </>
               ) : (
                 <span className="text-sm text-muted-foreground">

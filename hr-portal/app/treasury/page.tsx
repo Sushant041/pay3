@@ -15,14 +15,14 @@ import { parseUnits } from 'viem';
 export default function TreasuryPage() {
   const { isConnected, address } = useAccount();
   const [balance, setBalance] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [transactionsLoading, setTransactionsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [transactions, setTransactions] = useState<TreasuryTransaction[]>([]);
 
   // Load treasury balance and transactions on component mount
   useEffect(() => {
     if (isConnected) {
-      loadTreasuryBalance();
+      // loadTreasuryBalance();
       loadTransactions();
     }
   }, [isConnected]);

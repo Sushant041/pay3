@@ -143,7 +143,7 @@ export function EmployeeForm({ onEmployeeCreated }: EmployeeFormProps) {
                   </div>
 
                   <div className="space-y-1">
-                    <Label htmlFor="salaryUSD" className="text-xs font-medium">Annual Salary (USD)</Label>
+                    <Label htmlFor="salaryUSD" className="text-xs font-medium">Annual Salary (ANDR)</Label>
                     <Input
                       id="salaryUSD"
                       type="number"

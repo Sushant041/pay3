@@ -26,6 +26,7 @@ import { LoadingSpinner, LoadingDots } from '@/components/ui/loading-spinner';
 import { MorphHoleskyTestnet } from '@/config';
 import { parseUnits } from 'viem';
 import { useWalletContext } from '@/context';
+import { ExecuteSplitter } from '@/utils/splitter';
 
 interface PayoutFormProps {
   selectedEmployees: Employee[];
@@ -34,7 +35,7 @@ interface PayoutFormProps {
 }
 
 export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelection }: PayoutFormProps) {
-  const { isConnected } = useWalletContext();
+  const { isConnected, Address } = useWalletContext();
   const [open, setOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -45,19 +46,33 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
   const [treasuryBalance, setTreasuryBalance] = useState(0);
 
   const totalAmount = selectedEmployees.reduce((sum, emp) => sum + emp.salaryUSD, 0);
-  const hasInsufficientBalance = totalAmount > treasuryBalance;
+  // const hasInsufficientBalance = totalAmount > treasuryBalance;
 
   // Load treasury balance when dialog opens
-  const loadTreasuryBalance = async () => {
-    if (isConnected) {
-      try {
-        const balance = await getTreasuryBalanceUSD();
-        setTreasuryBalance(balance);
-      } catch (error) {
-        console.error('Error loading treasury balance:', error);
-      }
+  // const loadTreasuryBalance = async () => {
+  //   if (isConnected) {
+  //     try {
+  //       const balance = await getTreasuryBalanceUSD();
+  //       setTreasuryBalance(balance);
+  //     } catch (error) {
+  //       console.error('Error loading treasury balance:', error);
+  //     }
+  //   }
+  // };
+
+    const handleSplitter = async () => {
+    if (!Address || !isConnected) {
+      console.log("connect wallet");
+      return;
+    }
+  
+    try {
+      
+    } catch (error) {
+      console.error("Error executing splitter:", error);
     }
   };
+  
 
   const handlePayout = async () => {
     if (!isConnected) {
@@ -65,10 +80,10 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       return;
     }
 
-    if (hasInsufficientBalance) {
-      toast.error('Insufficient treasury balance');
-      return;
-    }
+    // if (hasInsufficientBalance) {
+    //   toast.error('Insufficient treasury balance');
+    //   return;
+    // }
 
     setIsProcessing(true);
 
@@ -77,43 +92,56 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       // Prepare employee addresses and amounts
       console.log('Selected Employees:', selectedEmployees);
       const employees = selectedEmployees;
-      const employeeAddresses = selectedEmployees.map(emp => emp.walletAddress);
-      const amounts = selectedEmployees.map(emp => parseUnits(emp.salaryUSD.toString(), 18).toString().toString());
+      // const employeeAddresses = selectedEmployees.map(emp => emp.walletAddress);
+      // const amounts = selectedEmployees.map(emp => parseUnits(emp.salaryUSD.toString(), 18).toString().toString());
 
-      // Execute batch pay transaction
+      // // Execute batch pay transaction
       const startTime = Date.now();
-      const tx = await batchPayEmployees(employeeAddresses, amounts);
+
+      const totalSalary = selectedEmployees.reduce(
+        (sum, emp) => sum + emp.salaryUSD,
+        0
+      );
+  
+      const Recipients = selectedEmployees.map((emp) => ({
+        address: emp.walletAddress,
+        percent: (emp.salaryUSD / totalSalary).toFixed(2),
+      }));
+      const new_tx = await ExecuteSplitter(
+        (totalSalary*1000000).toFixed(),
+        Recipients
+      );
 
       const endTime = Date.now();
       const processingTimeMs = endTime - startTime;
+      console.log(new_tx, processingTimeMs);
 
-      setTxHash(tx || 'Transaction completed');
       setProcessingTime(Math.round(processingTimeMs / 1000));
 
       // Wait for transaction confirmation and get receipt
-      const confirmationStartTime = Date.now();
-      try {
-        const receipt = await waitForTransactionReceipt(config, {
-          hash: tx as `0x${string}`,
-          confirmations: 3
+      // const confirmationStartTime = Date.now();
+      // try {
+      //   const receipt = await waitForTransactionReceipt(config, {
+      //     hash: tx as `0x${string}`,
+      //     confirmations: 3
 
-        });
+      //   });
 
-        const confirmationEndTime = Date.now();
-        const confirmationTimeMs = confirmationEndTime - confirmationStartTime;
-        setConfirmationTime(confirmationTimeMs / 1000);
+      //   const confirmationEndTime = Date.now();
+      //   const confirmationTimeMs = confirmationEndTime - confirmationStartTime;
+      //   setConfirmationTime(confirmationTimeMs / 1000);
 
-        const gasUsed = receipt.gasUsed?.toString() || 'Unknown';
-        setGasUsed(`${gasUsed} gas`);
+      //   const gasUsed = receipt.gasUsed?.toString() || 'Unknown';
+      //   setGasUsed(`${gasUsed} gas`);
 
-        // Only show completion after 10 confirmations
-        setIsCompleted(true);
-      } catch (receiptError) {
-        console.error('Error getting transaction receipt:', receiptError);
-        setGasUsed('Gas info unavailable');
-        setConfirmationTime(0);
-        setIsCompleted(true);
-      }
+      //   // Only show completion after 10 confirmations
+      //   setIsCompleted(true);
+      // } catch (receiptError) {
+      //   console.error('Error getting transaction receipt:', receiptError);
+      //   setGasUsed('Gas info unavailable');
+      //   setConfirmationTime(0);
+      //   setIsCompleted(true);
+      // }
 
       // Create payout record in database
       const payouts = employees.map(employee => ({
@@ -122,7 +150,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       }));
 
       await payoutApi.createBatch({
-        txHash: tx || 'Transaction completed',
+        txHash: new_tx.transactionHash || 'Transaction completed',
         payouts,
       });
 
@@ -146,7 +174,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
     if (open) {
-      loadTreasuryBalance();
+      // loadTreasuryBalance();
       setIsCompleted(false);
       setTxHash('');
       setGasUsed('');
@@ -201,7 +229,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
               <Button
                 onClick={handlePayout}
                 className="w-full h-12 text-lg font-semibold"
-                disabled={isProcessing || hasInsufficientBalance}
+                disabled={isProcessing}
                 size="lg"
               >
                 {isProcessing ? (

@@ -1,16 +1,16 @@
 export function ESOPGrantEmailTemplate({
   firstName,
   companyName,
-  totalTokens,
-  durationMonths,
+  tokenAmount,
+  vestingMonths,
   cliffMonths,
   startDate,
   employeePortalUrl,
 }: {
   firstName: string;
   companyName: string;
-  totalTokens: number;
-  durationMonths: number;
+  tokenAmount: number;
+  vestingMonths: number;
   cliffMonths: number;
   startDate: string;
   employeePortalUrl: string;
@@ -87,8 +87,8 @@ export function ESOPGrantEmailTemplate({
             </p>
             <p>Here are your ESOP details:</p>
             <ul>
-              <li><strong>Total Tokens:</strong> {totalTokens}</li>
-              <li><strong>Vesting Duration:</strong> {durationMonths} months</li>
+              <li><strong>Total Tokens:</strong> {tokenAmount}</li>
+              <li><strong>Vesting Duration:</strong> {vestingMonths} months</li>
               <li><strong>Cliff Period:</strong> {cliffMonths} months</li>
               <li><strong>Start Date:</strong> {startDate}</li>
             </ul>

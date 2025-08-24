@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  TrendingUp, 
+import {
+  TrendingUp,
   TrendingDown,
   Clock,
   CheckCircle,
@@ -53,14 +53,13 @@ export function TransactionHistory({ transactions, className }: TransactionHisto
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-                      {transactions.map((transaction) => (
-              <div key={transaction._id} className="flex items-center justify-between p-4 border rounded-lg">
+          {transactions.map((transaction) => (
+            <div key={transaction._id} className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-4">
-                <div className={`p-2 rounded-full ${
-                  transaction.type === 'deposit' 
-                    ? 'bg-green-100 text-green-600' 
+                <div className={`p-2 rounded-full ${transaction.type === 'deposit'
+                    ? 'bg-green-100 text-green-600'
                     : 'bg-red-100 text-red-600'
-                }`}>
+                  }`}>
                   {transaction.type === 'deposit' ? (
                     <TrendingUp className="h-4 w-4" />
                   ) : (
@@ -75,23 +74,23 @@ export function TransactionHistory({ transactions, className }: TransactionHisto
                   <p className="text-xs text-muted-foreground font-mono mx-3">
                     {transaction.txHash}
 
-                      <a
-                            href={`${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${transaction.txHash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-primary"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
+                    <a
+                      href={`https://explorer.testnet.andromedaprotocol.io/galileo-4/tx${transaction.txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 {getStatusIcon(transaction.status)}
                 {getStatusBadge(transaction.status)}
-                                  <p className="text-xs text-muted-foreground">
-                    {new Date(transaction.createdAt).toLocaleDateString()}
-                  </p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(transaction.createdAt).toLocaleDateString()}
+                </p>
               </div>
             </div>
           ))}

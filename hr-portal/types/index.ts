@@ -5,6 +5,7 @@ export interface Employee {
   walletAddress: string;
   salaryUSD: number;
   designation: string;
+  vestingContractAddress : string;
   createdAt: string;
   __v: number;
 }

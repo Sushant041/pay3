@@ -32,10 +32,10 @@ export function BalanceDisplay() {
         // setLoading(true);
   
         // Get USDC balance
-        const usdcBalance = await getBalance(Address);
-        const formattedBalance = Number(formatUnits(BigInt(usdcBalance), 18));
-        console.log('USDC Balance:', formattedBalance);
-        setUsdcBalance(formattedBalance.toString());
+        // const usdcBalance = await getBalance(Address);
+        // const formattedBalance = Number(formatUnits(BigInt(usdcBalance), 18));
+        // console.log('USDC Balance:', formattedBalance);
+        // setUsdcBalance(formattedBalance.toString());
       } catch (error) {
         console.error('Error loading balances:', error);
         setUsdcBalance('0');
@@ -45,7 +45,7 @@ export function BalanceDisplay() {
     };
   
     // Initial load
-    loadBalances();
+    // loadBalances();
   
     // Poll every 10 seconds (adjust as needed)
     intervalId = setInterval(loadBalances, 3000);

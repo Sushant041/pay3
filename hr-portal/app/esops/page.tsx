@@ -10,17 +10,17 @@ import { TrendingUp, Calendar, Users, Award, Clock, DollarSign, Trash2 } from 'l
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { formatDistanceToNow } from 'date-fns';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
-import { 
-  getAllVestings, 
-  getEmployeeList, 
+import {
+  getAllVestings,
+  getEmployeeList,
   formatVestingData,
   calculateVestingSchedule,
   removeEmployeeFromESOP,
   weiToEth
 } from '@/utils/esopsContractUtils';
-import { waitForTransactionReceipt} from '@wagmi/core';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import { config } from '@/config';
-import { CreateVesting } from '@/utils/splitter';
+
 
 interface VestingData {
   employee: string;
@@ -52,8 +52,9 @@ export default function ESOPsPage() {
       console.log('getting call')
       const [employeesData, vestingsData] = await Promise.all([
         employeeApi.getAll(),
-        loadVestingsFromContract(),
+        loadVestingsFromAPI(),
       ]);
+      console.log(vestingsData, "after fetch")
       setEmployees(employeesData);
       setVestings(vestingsData);
     } catch (error) {
@@ -64,31 +65,31 @@ export default function ESOPsPage() {
   };
 
   const handleESOPCreated = async (esopData: any) => {
-  try {
-    // Make API request to your backend
-    console.log('Creating ESOP with data:', esopData);
-    await fetch(`/api/esops`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(esopData),
-    });
+    try {
+      // Make API request to your backend
+      console.log('Creating ESOP with data:', esopData);
+      await fetch(`/api/esops`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(esopData),
+      });
 
-    // Refresh data after creation
-    await loadData();
-  } catch (error) {
-    console.error('Failed to create ESOP:', error);
-  }
-};
+      // Refresh data after creation
+      await loadData();
+    } catch (error) {
+      console.error('Failed to create ESOP:', error);
+    }
+  };
 
   const loadVestingsFromContract = async (): Promise<VestingData[]> => {
     try {
       const [employeeAddresses, vestingData] = await getAllVestings();
       const formattedVestings: VestingData[] = [];
-      
+
       for (let i = 0; i < employeeAddresses.length; i++) {
         const employeeAddress = employeeAddresses[i];
         const vesting = vestingData[i];
-        
+
         if (vesting && employeeAddress !== '0x0000000000000000000000000000000000000000') {
           const formatted = formatVestingData(vesting);
           if (formatted) {
@@ -99,7 +100,7 @@ export default function ESOPsPage() {
           }
         }
       }
-      
+
       return formattedVestings;
     } catch (error) {
       console.error('Error loading vestings from contract:', error);
@@ -107,22 +108,55 @@ export default function ESOPsPage() {
     }
   };
 
+  const loadVestingsFromAPI = async (): Promise<VestingData[]> => {
+    try {
+      const response = await fetch("/api/esops", { method: "GET" });
+      if (!response.ok) throw new Error("Failed to fetch vestings");
+
+      const vestingsresponse = await response.json();
+
+      console.log(vestingsresponse.data[0], "vesting")
+      
+      if(!vestingsresponse.data)return [];
+
+      return vestingsresponse?.data?.map((vesting: any) => {
+          const formatted = formatVestingData({
+            totalAmount: vesting.tokenAmount,
+            claimed: vesting.claimed || 0,
+            start: Math.floor(new Date(vesting.vestingStart).getTime() / 1000),
+            cliff: vesting.cliffMonths,
+            duration: vesting.vestingMonths
+          });
+
+          if (!formatted) return null;
+
+          return {
+            employee: vesting.employeeId.walletAddress, // OR include full employee object
+            ...formatted,
+            employeeDetails: vesting.employeeId // optional full employee data
+          };
+        })
+        .filter((v: any) => v !== null); // remove invalid entries
+    } catch (error) {
+      console.error("Error loading vestings from API:", error);
+      return [];
+    }
+  };
+
   const handleRemoveEmployee = async (employeeAddress: string) => {
     try {
-         const tx = await removeEmployeeFromESOP(employeeAddress);
-     const receipt = await waitForTransactionReceipt(config, {
-              hash: tx as `0x${string}`
-              
-            })
+      const tx = await removeEmployeeFromESOP(employeeAddress);
+      const receipt = await waitForTransactionReceipt(config, {
+        hash: tx as `0x${string}`
+
+      })
       await loadData();
     } catch (error) {
       console.error('Error removing employee from ESOP:', error);
     }
   };
 
-
-
-  const totalTokens = vestings.reduce((sum, vesting) => sum + weiToEth(vesting.totalAmount), 0);
+  const totalTokens = vestings.reduce((sum, vesting) => sum + (vesting.totalAmount), 0);
   const activeEsops = vestings.filter(vesting => {
     const now = Math.floor(Date.now() / 1000);
     const vestingEnd = vesting.start + (vesting.duration * 30 * 24 * 60 * 60); // Convert months to seconds
@@ -145,11 +179,6 @@ export default function ESOPsPage() {
     );
   }
 
-  const handleVestingCreation = async() => {
-      //  if()
-      await CreateVesting("test n2");
-  }
-
   return (
     <div className="flex-1 space-y-8 p-8 min-h-screen">
       <div className="flex items-center justify-between">
@@ -159,9 +188,7 @@ export default function ESOPsPage() {
             Grant and track employee stock option plans.
           </p>
         </div>
-        <Button onClick={handleVestingCreation}>
-          Test vesting
-        </Button>
+
         <ESOPForm employees={employees} onESOPCreated={handleESOPCreated} />
       </div>
 
@@ -181,7 +208,7 @@ export default function ESOPsPage() {
         <StatsCard
           title="Total Tokens"
           value={totalTokens.toFixed(2)}
-          description="ETH granted to date"
+          description="ANDR granted to date"
           icon={Award}
         />
         <StatsCard
@@ -203,17 +230,17 @@ export default function ESOPsPage() {
                 vestings.map((vesting) => {
                   // Find employee by wallet address
                   const employee = employees.find(emp => emp.walletAddress.toLowerCase() === vesting.employee.toLowerCase());
-                  
+
                   // Calculate vesting details
                   const vestingStart = new Date(vesting.start * 1000); // Convert from seconds to milliseconds
                   const now = new Date();
                   const vestingEnd = new Date((vesting.start + vesting.duration * 30 * 24 * 60 * 60) * 1000);
                   const cliffEnd = new Date((vesting.start + vesting.cliff * 30 * 24 * 60 * 60) * 1000);
-                  
+
                   const daysRemaining = Math.max(0, Math.ceil((vestingEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
                   const isCliffPassed = now >= cliffEnd;
                   const isVestingActive = now >= vestingStart && now <= vestingEnd;
-                  
+
                   return (
                     <div key={vesting.employee} className="p-4 border border-border rounded-lg bg-card shadow-sm">
                       <div className="flex items-start justify-between mb-3">
@@ -223,31 +250,30 @@ export default function ESOPsPage() {
                             <span className="font-medium text-base text-foreground">
                               {employee?.name || `${vesting.employee.slice(0, 6)}...${vesting.employee.slice(-4)}`}
                             </span>
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              isVestingActive 
-                                ? 'bg-primary/20 text-primary' 
-                                : now < vestingStart 
-                                ? 'bg-muted text-muted-foreground' 
+                            <span className={`px-2 py-1 text-xs rounded-full ${isVestingActive
+                              ? 'bg-primary/20 text-primary'
+                              : now < vestingStart
+                                ? 'bg-muted text-muted-foreground'
                                 : 'bg-primary/20 text-primary'
-                            }`}>
+                              }`}>
                               {isVestingActive ? 'Active' : now < vestingStart ? 'Pending' : 'Completed'}
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             {employee?.designation || 'Employee'}
                           </p>
-                          
+
                           <div className="grid grid-cols-2 gap-4 mb-3">
                             <div>
-                              <p className="text-xs font-medium text-muted-foreground">Total Tokens (ETH)</p>
+                              <p className="text-xs font-medium text-muted-foreground">Total Tokens (ANDR)</p>
                               <p className="text-base font-semibold text-foreground">{weiToEth(vesting.totalAmount).toFixed(6)}</p>
                             </div>
                             <div>
-                              <p className="text-xs font-medium text-muted-foreground">Vested Tokens (ETH)</p>
+                              <p className="text-xs font-medium text-muted-foreground">Vested Tokens (ANDR)</p>
                               <p className="text-base font-semibold text-foreground">{weiToEth(vesting.vestedAmount).toFixed(6)}</p>
                             </div>
                           </div>
-                          
+
                           <div className="grid grid-cols-3 gap-3 text-xs">
                             <div>
                               <p className="font-medium text-muted-foreground">Vesting Period</p>
@@ -263,7 +289,7 @@ export default function ESOPsPage() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="text-right ml-4">
                           <Button
                             variant="outline"
@@ -287,7 +313,7 @@ export default function ESOPsPage() {
                           )}
                         </div>
                       </div>
-                      
+
                       {/* Progress bar */}
                       <div className="mt-3">
                         <div className="flex justify-between text-xs text-muted-foreground mb-1">
@@ -295,7 +321,7 @@ export default function ESOPsPage() {
                           <span>{Math.round((weiToEth(vesting.vestedAmount) / weiToEth(vesting.totalAmount)) * 100)}%</span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-1.5">
-                          <div 
+                          <div
                             className="bg-primary h-1.5 rounded-full transition-all duration-300"
                             style={{ width: `${Math.min((weiToEth(vesting.vestedAmount) / weiToEth(vesting.totalAmount)) * 100, 100)}%` }}
                           ></div>

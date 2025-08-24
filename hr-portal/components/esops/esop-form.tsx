@@ -32,6 +32,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { waitForTransactionReceipt } from '@wagmi/core'
 import { config } from '@/config';
 import { toast } from 'react-toastify';
+import { CreateVesting } from '@/utils/splitter';
 
 const esopSchema = z.object({
   employeeId: z.string().min(1, 'Employee is required'),
@@ -43,10 +44,11 @@ const esopSchema = z.object({
 
 interface ESOPPayload {
   employeeId: string;
-  totalTokens: number;
-  duration: number;
-  cliff: number;
-  start: number;
+  tokenAmount: number;
+  vestingMonths: number;
+  cliffMonths: number;
+  vestingStart: number;
+  txHash: string;
 }
 
 interface ESOPFormProps {
@@ -81,35 +83,45 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       const startTime = Math.floor(new Date(data.vestingStart).getTime() / 1000);
 
       // Convert ETH to wei
-      const tokenAmountInWei = ethToWei(data.tokenAmount);
+      // const tokenAmountInWei = ethToWei(data.tokenAmount);
+      const tokenAmountInUandr = ((data.tokenAmount * 1000000) / data.vestingMonths).toFixed();
+      const lockupDurationInMillisec = (data.cliffMonths * 30 * 24 * 60 * 60 * 1000);
+      const intervalDurationMs = (30 * 24 * 60 * 60 * 1000);
+
 
       // Call the smart contract
-      const tx = await addEmployeeToESOP(
-        employee.walletAddress,
-        startTime,
-        data.cliffMonths,
-        data.vestingMonths,
-        tokenAmountInWei
-      );
+      // const tx = await addEmployeeToESOP(
+      //   employee.walletAddress,
+      //   startTime,
+      //   data.cliffMonths,
+      //   data.vestingMonths,
+      //   tokenAmountInWei
+      // );
 
-
-
-
+      // const tx = await CreateVesting(
+      //   employee._id, 
+      //   employee, 
+      //   tokenAmountInUandr, 
+      //   lockupDurationInMillisec, 
+      //   intervalDurationMs, 
+      //   (data.tokenAmount * 1000000).toFixed()
+      // )
+      
       // await tx.wait();
-      const receipt = await waitForTransactionReceipt(config, {
-        hash: tx as `0x${string}`
+      // const receipt = await waitForTransactionReceipt(config, {
+      //   hash: tx as `0x${string}`
 
-      })
-      console.log('Transaction receipt:', receipt);
+      // })
+      // console.log('Transaction receipt:', tx);
       await onESOPCreated({
         employeeId: data.employeeId,
-        totalTokens: data.tokenAmount,
-        duration: data.vestingMonths,
-        cliff: data.cliffMonths,
-        start: startTime
+        tokenAmount: data.tokenAmount,
+        vestingMonths: data.vestingMonths,
+        cliffMonths: data.cliffMonths,
+        vestingStart: startTime,
+        txHash: "tx.transactionHash"
       });
-
-
+   
       reset();
       setOpen(false);
       toast.success('ESOP granted successfully');
@@ -180,7 +192,7 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="tokenAmount" className="text-xs font-medium">Token Amount (ETH)</Label>
+                  <Label htmlFor="tokenAmount" className="text-xs font-medium">Token Amount (ANDR)</Label>
                   <Input
                     id="tokenAmount"
                     type="number"
@@ -193,7 +205,7 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
                     <p className="text-xs text-red-600">{errors.tokenAmount.message}</p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    Total tokens to be granted (in ETH)
+                    Total tokens to be granted (in ANDR)
                   </p>
                 </div>
               </CardContent>

@@ -24,22 +24,20 @@ export default function Dashboard() {
     loadDashboardData();
   }, []);
 
-  console.log(process.env.MONGODB_URI)
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     loadTreasuryBalance();
+  //   }
+  // }, [isConnected]);
 
-  useEffect(() => {
-    if (isConnected) {
-      loadTreasuryBalance();
-    }
-  }, [isConnected]);
-
-  const loadTreasuryBalance = async () => {
-    try {
-      const balance = await getTreasuryBalanceUSD();
-      setTreasuryBalance(balance);
-    } catch (error) {
-      console.error('Error loading treasury balance:', error);
-    }
-  };
+  // const loadTreasuryBalance = async () => {
+  //   try {
+  //     const balance = await getTreasuryBalanceUSD();
+  //     setTreasuryBalance(balance);
+  //   } catch (error) {
+  //     console.error('Error loading treasury balance:', error);
+  //   }
+  // };
 
   const loadDashboardData = async () => {
     try {
@@ -166,7 +164,7 @@ export default function Dashboard() {
                       </span>
 
                       <a
-                        href={`${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${batch.txHash}`}
+                        href={`https://explorer.testnet.andromedaprotocol.io/galileo-4/tx/${batch.txHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary"
@@ -175,14 +173,10 @@ export default function Dashboard() {
                       </a>
                     </div>
                   </div>
-
                   <div className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(batch.createdAt), { addSuffix: true })}
                   </div>
                 </div>
-
-
-
               ))}
               {batches.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">

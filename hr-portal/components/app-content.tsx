@@ -16,7 +16,7 @@ interface AppContentProps {
 export function AppContent({ children }: AppContentProps) {
   const { isConnected, setIsConnected, disconnect, Address, setAddress } = useWalletContext();
   const [error, setError] = useState<string | null>(null);
-  useNProgress();
+  const loading = useNProgress();
 
   // Keplr connect function
   const connectWallet = async () => {
@@ -52,7 +52,7 @@ export function AppContent({ children }: AppContentProps) {
       await window.keplr.enable(chainId);
 
       // Get signer + accounts
-      const offlineSigner = window.keplr.getOfflineSigner(chainId);
+      const offlineSigner = await window.keplr.getOfflineSignerAuto(chainId);
       const accounts = await offlineSigner.getAccounts();
 
       if (accounts.length > 0) {
@@ -121,6 +121,7 @@ export function AppContent({ children }: AppContentProps) {
                   onClick={connectWallet}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                   size="lg"
+                  disabled = {loading}
                 >
                   <b>Connect Keplr Wallet</b>
                 </Button>

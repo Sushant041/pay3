@@ -70,6 +70,7 @@ async function initAndromedaClient(): Promise<ChainClient> {
   console.log("Connected accounts:", accounts);
   return client;
 }
+
 const Recipients = [
   {
     address: "andr192f03qa06ncawdtdytelcamgluygx4ayt22498",
@@ -82,10 +83,32 @@ const Recipients = [
 ];
 
 import { Msg } from "@andromedaprotocol/andromeda.js";
+import { Employee } from "@/types";
+import { toast } from "react-toastify";
+
+
+async function updateVesting(employeeId: string, vestingContractAddress: string) {
+    try {
+      const res = await fetch("/api/employees", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId, vestingContractAddress }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        console.log("Employee updated:", data.employee);
+      } else {
+        console.error("Update failed:", data.error);
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  }
 
 export const ExecuteSplitter = async (
   amount: string,
-  recipients: { address: string; percent: string }[] = Recipients
+  recipients: { address: string; percent: string }[]
 ) => {
   try {
     const client = await initAndromedaClient();
@@ -130,10 +153,10 @@ function getAdoAddressByCodeId(
   for (const event of txResponse.events) {
     if (event.type === "instantiate") {
       const codeAttr = event.attributes.find(
-        (attr:any) => attr.key === "code_id"
+        (attr: any) => attr.key === "code_id"
       );
       const addrAttr = event.attributes.find(
-        (attr:any) => attr.key === "_contract_address"
+        (attr: any) => attr.key === "_contract_address"
       );
       if (codeAttr?.value === codeId && addrAttr) {
         return addrAttr.value;
@@ -145,34 +168,37 @@ function getAdoAddressByCodeId(
 
 
 
-export const ExecuteVesting = async (VestingContractAddress: string, amount: string, lockup_duration: string, release_duration: string, funds: string) => {
+export const ExecuteVesting = async (VestingContractAddress: string, amount: string, lockup_duration: number, release_duration: number, funds: string) => {
   try {
     const client = await initAndromedaClient();
     const msg: Msg = {
       create_batch: {
         release_amount: {
-          amount: "20000000",
+          amount: amount,
         },
-        lockup_duration: 60000,
-        release_duration: 10000,
+        lockup_duration: lockup_duration,
+        release_duration: release_duration,
       }
     };
+    console.log("vesting.......", funds, VestingContractAddress, msg);
 
     const res = await client.execute(
       VestingContractAddress, // contract address
       msg,
       "auto",          // or specify gas amount
       "Create Vesting Batch", // optional memo
-      [{ denom: "uandr", amount: "20000000" }] // funds being sent
+      [{ denom: "uandr", amount: funds }] // funds being sent
     );
 
     console.log(res);
+    return res;
   } catch (error) {
     console.log(error, "Error creating vesting for contract address", VestingContractAddress);
+    throw error;
   }
 }
 
-export const CreateVesting = async (Name: string, EmployeeAddress: string, amount: string, lockup_duration: string, release_duration: string, funds: string) => {
+const CreateNewVesting = async (employee: Employee, Name: string) => {
   try {
     const client = await initAndromedaClient();
     const componentData = {
@@ -180,13 +206,13 @@ export const CreateVesting = async (Name: string, EmployeeAddress: string, amoun
       recipient: {
         msg: null,
         ibc_recovery_address: null,
-        address: "andr19tm02vzdeg44rjh3q9kg5p6tthzvrr5aespc7w", //Employee address for dynamic vesting cotract
+        address: employee.walletAddress, //Employee address for dynamic vesting cotract
       },
       denom: "uandr",
     };
 
     const msg: Msg = {
-      name: "hi1",
+      name: Name+"1",
       app_components: [
         {
           name: "vesting-0",
@@ -197,7 +223,7 @@ export const CreateVesting = async (Name: string, EmployeeAddress: string, amoun
         },
       ],
       chain_info: [],
-      kernel_address: "andr16meeuvwey03jvq26g2gvtpz42zak72hrtw3cpdqha8g64duav88qgs46r7",
+      kernel_address: KernelAddress,
     };
     const res = await client.instantiate(
       2364,
@@ -205,10 +231,28 @@ export const CreateVesting = async (Name: string, EmployeeAddress: string, amoun
       'ANDR - Instantiate'
     )
     console.log(res);
-    const adoAddress = getAdoAddressByCodeId(res, "2387");
+    const vestingContractAddress = getAdoAddressByCodeId(res, "2387");
+    
+    await updateVesting(employee._id, vestingContractAddress)
+    return vestingContractAddress;
+  } catch (error) {
+    console.log(error);
+    return "";
+  }
+}
+
+export async function CreateVesting (Name: string, employee: Employee, amount: string, lockup_duration: number, release_duration: number, funds: string) {
+  try {
+    const adoAddress = employee.vestingContractAddress ? employee.vestingContractAddress : await CreateNewVesting(employee, Name);
+    if (adoAddress === "") {
+      toast.error("Failed to create vesting");
+      throw new Error("Failed to create vesting")
+    }
     const tx = await ExecuteVesting(adoAddress, amount, lockup_duration, release_duration, funds);
     console.log(tx);
+    return tx;
   } catch (error) {
-    console.log(error, "Error assigning esops for user", EmployeeAddress);
+    console.log(error, "Error assigning esops for user", employee.walletAddress);
+    throw error;
   }
 }
