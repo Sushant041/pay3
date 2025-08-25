@@ -71,16 +71,6 @@ async function initAndromedaClient(): Promise<ChainClient> {
   return client;
 }
 
-const Recipients = [
-  {
-    address: "andr192f03qa06ncawdtdytelcamgluygx4ayt22498",
-    percent: "0.5",
-  },
-  {
-    address: "andr1jhghqn3lw9hlm9ptvffhk504kz888hn79ymwnz",
-    percent: "0.5",
-  }
-];
 
 import { Msg } from "@andromedaprotocol/andromeda.js";
 import { Employee } from "@/types";
@@ -166,6 +156,32 @@ function getAdoAddressByCodeId(
   return "";
 }
 
+const updateOwnership = async (contractAddress: string, newOwnerAddress: string) => {
+  try {
+    const client = await initAndromedaClient();
+    const msg: Msg = {
+      ownership: {
+        update_owner: {
+          expiration: null,
+          new_owner: newOwnerAddress,
+        },
+      },
+    };
+
+    const res = await client.execute(
+      contractAddress, // contract address
+      msg,
+      "auto",          // or specify gas amount
+      "Update Ownership", // optional memo
+    );
+
+    console.log("Ownership updated:", res);
+    return res;
+  } catch (error) {
+    console.log(error, "Error updating ownership for contract address", contractAddress);
+    throw error;
+  }
+}
 
 
 export const ExecuteVesting = async (VestingContractAddress: string, amount: string, lockup_duration: number, release_duration: number, funds: string) => {
@@ -233,7 +249,10 @@ const CreateNewVesting = async (employee: Employee, Name: string) => {
     console.log(res);
     const vestingContractAddress = getAdoAddressByCodeId(res, "2387");
 
-    await updateVesting(employee._id, vestingContractAddress)
+    await updateVesting(employee._id, vestingContractAddress);
+
+    await updateOwnership(vestingContractAddress, employee.walletAddress);
+    
     return vestingContractAddress;
   } catch (error) {
     console.log(error);

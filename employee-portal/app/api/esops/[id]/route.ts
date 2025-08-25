@@ -14,7 +14,7 @@ export async function PATCH(
 
         const updatedEsop = await Esop.findByIdAndUpdate(
             params.id,
-            { $set: data }, // ensures only given fields update
+            { $set: {claimed: data.claimed} }, // ensures only given fields update
             { new: true, runValidators: true }
         )
             .populate("employeeId", "name designation walletAddress vestingContractAddress")

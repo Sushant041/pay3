@@ -97,7 +97,7 @@ export default function ESOPsPage() {
 
         if (!formatted) return null;
         return {
-          employee: vesting.employeeId.walletAddress, // OR include full employee object
+          employee: vesting?.employeeId?.walletAddress, // OR include full employee object
           ...formatted,
           employeeDetails: vesting.employeeId,
           id: vesting._id // optional full employee data
@@ -200,10 +200,10 @@ export default function ESOPsPage() {
           </CardHeader>
           <CardContent className="flex-1">
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-              {vestings.length > 0 ? (
-                vestings.map((vesting) => {
+              {vestings?.length > 0 ? (
+                vestings?.map((vesting) => {
                   // Find employee by wallet address
-                  const employee = employees.find(emp => emp.walletAddress.toLowerCase() === vesting.employee.toLowerCase());
+                  const employee = employees.find(emp => emp.walletAddress.toLowerCase() === vesting?.employee?.toLowerCase());
 
                   // Calculate vesting details
                   const vestingStart = new Date(vesting.start * 1000); // Convert from seconds to milliseconds
@@ -222,7 +222,7 @@ export default function ESOPsPage() {
                           <div className="flex items-center gap-2 mb-2">
                             <Award className="h-4 w-4 text-primary" />
                             <span className="font-medium text-base text-foreground">
-                              {employee?.name || `${vesting.employee.slice(0, 6)}...${vesting.employee.slice(-4)}`}
+                              {employee?.name || `${vesting?.employee?.slice(0, 6)}...${vesting?.employee?.slice(-4)}`}
                             </span>
                             <span className={`px-2 py-1 text-xs rounded-full ${isVestingActive
                               ? 'bg-primary/20 text-primary'

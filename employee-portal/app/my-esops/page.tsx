@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { formatVestingData } from '@/utils/esopsContractUtils';
 import { toast } from 'react-toastify';
 import { useWalletContext } from '@/context';
-import { claimAllTokens } from '@/utils/claimEsops';
+import { claimAllTokens, queryBatches } from '@/utils/claimEsops';
 
 interface ESOPData {
   vestedAmount: number;
@@ -174,11 +174,13 @@ export default function MyESOPsPage() {
         toast.error('Failed to claim tokens');
         return;
       }
+      const query = await queryBatches(esopData.vestedContractAddress);
+      console.log(query, "query after claim");
+
       const updateRes = await fetch(`/api/esops/${myVestings?.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          claimableAmount: 0,
           claimed: esopData.vestedAmount
         }),
       });

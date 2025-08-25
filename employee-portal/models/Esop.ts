@@ -8,6 +8,7 @@ export interface IEsop extends Document {
   vestingMonths: number;
   txHash?: string;
   createdAt: Date;
+  claimed: number;
 }
 
 const EsopSchema = new Schema<IEsop>({
@@ -16,6 +17,7 @@ const EsopSchema = new Schema<IEsop>({
   vestingStart: { type: Date, required: true },
   cliffMonths: { type: Number, required: true },
   vestingMonths: { type: Number, required: true },
+  claimed: { type: Number, default: 0 },
   txHash: String,
   createdAt: { type: Date, default: Date.now }
 });
