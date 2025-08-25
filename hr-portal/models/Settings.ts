@@ -15,7 +15,7 @@ export interface ISettings extends Document {
 const SettingsSchema = new Schema<ISettings>({
   organizationName: { type: String, required: true, default: 'Acme Corp' },
   tokenAddress: { type: String, required: true, default: 'usdt' },
-  network: { type: String, required: true, default: 'morph' },
+  network: { type: String, required: true, default: 'andromeda testnet' },
   autoPayouts: { type: Boolean, default: true },
   notifications: { type: Boolean, default: true },
   databaseUrl: { type: String, default: 'https://api.example.com' },

@@ -4,10 +4,10 @@ import { Sidebar } from '@/components/ui/sidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Wallet, AlertCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNProgress } from '@/hooks/use-nprogress';
-import { BalanceDisplay } from '@/components/ui/balance-display';
 import { useWalletContext } from '@/context';
+import { toast } from 'react-toastify';
 
 interface AppContentProps {
   children: React.ReactNode;
@@ -69,9 +69,13 @@ export function AppContent({ children }: AppContentProps) {
   };
 
   const disconnectWallet = () => {
-    disconnect();
-    localStorage.removeItem('walletConnected');
-    localStorage.removeItem('walletAddress');
+    try {
+      disconnect();
+      localStorage.removeItem('walletConnected');
+      localStorage.removeItem('walletAddress');
+    } catch (error) {
+      toast.error("Failed to disconnect");
+    }
   };
 
   if (!isConnected) {
@@ -121,7 +125,7 @@ export function AppContent({ children }: AppContentProps) {
                   onClick={connectWallet}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                   size="lg"
-                  disabled = {loading}
+                  disabled={loading}
                 >
                   <b>Connect Keplr Wallet</b>
                 </Button>

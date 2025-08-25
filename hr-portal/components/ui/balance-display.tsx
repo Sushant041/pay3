@@ -1,21 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Wallet, Coins } from 'lucide-react';
-import { formatUnits } from 'viem';
-// import { getBalance } from '@/utils/mockUSDCUtils';
-// import { } from 'wagmi';
-import { config } from '@/config';
-import { getBalance} from "@/utils/mockUSDCUtils"
+import { Coins } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useWalletContext } from '@/context';
 
 export function BalanceDisplay() {
   // const { address, isConnected } = useAccount();
-  const { Address, isConnected} = useWalletContext()
+  const { Address, isConnected } = useWalletContext()
   const [usdcBalance, setUsdcBalance] = useState<string>('0');
   const [loading, setLoading] = useState(true);
 
@@ -24,13 +17,13 @@ export function BalanceDisplay() {
       setLoading(false);
       return;
     }
-  
+
     let intervalId: NodeJS.Timeout;
-  
+
     const loadBalances = async () => {
       try {
         // setLoading(true);
-  
+
         // Get USDC balance
         // const usdcBalance = await getBalance(Address);
         // const formattedBalance = Number(formatUnits(BigInt(usdcBalance), 18));
@@ -43,17 +36,17 @@ export function BalanceDisplay() {
         setLoading(false);
       }
     };
-  
+
     // Initial load
     // loadBalances();
-  
+
     // Poll every 10 seconds (adjust as needed)
     intervalId = setInterval(loadBalances, 3000);
-  
+
     // Cleanup on unmount or dependency change
     return () => clearInterval(intervalId);
   }, [Address, isConnected]);
-  
+
 
   if (!isConnected) {
     return null;
@@ -61,26 +54,26 @@ export function BalanceDisplay() {
 
   return (
     <div className="flex items-center gap-3">
-    
+
 
       {/* USDC Balance */}
       <Card className="border-border bg-card/50 backdrop-blur-sm">
-  <CardContent className="p-3">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Coins className="h-4 w-4 text-green-500" />
-        <div className="font-medium text-foreground mr-3">USDT</div>
-      </div>
-      <div className="text-sm text-muted-foreground">
-        {loading ? (
-          <LoadingSpinner size="sm" />
-        ) : (
-          `${parseFloat(usdcBalance).toFixed(2)}`
-        )}
-      </div>
-    </div>
-  </CardContent>
-</Card>
+        <CardContent className="p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Coins className="h-4 w-4 text-green-500" />
+              <div className="font-medium text-foreground mr-3">USDT</div>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {loading ? (
+                <LoadingSpinner size="sm" />
+              ) : (
+                `${parseFloat(usdcBalance).toFixed(2)}`
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
     </div>
   );

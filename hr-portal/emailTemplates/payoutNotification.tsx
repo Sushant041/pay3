@@ -1,4 +1,3 @@
-import { MorphHoleskyTestnet } from "@/config";
 
 export function EmailTemplate({
   firstName,
@@ -82,12 +81,12 @@ export function EmailTemplate({
           <div className="content">
             <p>Hi {firstName},</p>
             <p>
-              Your payout of <strong>${amountUSD.toFixed(2)}</strong> has been processed to the wallet:
+              Your payout of <strong>{amountUSD.toFixed(2)} ANDR</strong> has been processed to the wallet:
             </p>
             <p><code>{walletAddress}</code></p>
             <p>You can view the transaction here:</p>
             <p>
-              <a href={`${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`} target="_blank" rel="noreferrer">
+              <a href={`https://explorer.testnet.andromedaprotocol.io/galileo-4/tx/${txHash}`} target="_blank" rel="noreferrer">
                 View Transaction
               </a>
             </p>

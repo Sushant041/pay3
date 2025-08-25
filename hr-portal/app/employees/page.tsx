@@ -9,11 +9,7 @@ import { PayoutForm } from '@/components/payouts/payout-form';
 import { employeeApi } from '@/lib/api';
 import { Employee } from '@/types';
 import { Users, DollarSign, AlertTriangle, Wallet } from 'lucide-react';
-import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
-// import { toast } from 'react-toastify';
-import Link from 'next/link';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
-import { ExecuteSplitter } from '@/utils/splitter';
 import { useWalletContext } from '@/context';
 
 export default function EmployeesPage() {
@@ -28,20 +24,6 @@ export default function EmployeesPage() {
     loadEmployees();
   }, []);
 
-  // useEffect(() => {
-  //   if (isConnected) {
-  //     loadTreasuryBalance();
-  //   }
-  // }, [isConnected]);
-
-  // const loadTreasuryBalance = async () => {
-  //   try {
-  //     const balance = await getTreasuryBalanceUSD();
-  //     setTreasuryBalance(balance);
-  //   } catch (error) {
-  //     console.error('Error loading treasury balance:', error);
-  //   }
-  // };
 
   const loadEmployees = async () => {
     try {
@@ -51,7 +33,6 @@ export default function EmployeesPage() {
       console.error('Failed to load employees:', error);
     } finally {
       setLoading(false);
-
     }
   };
 
@@ -61,11 +42,9 @@ export default function EmployeesPage() {
       setSelectedEmployees([]);
 
       const [employeeList] = await Promise.all([
-        // getTreasuryBalanceUSD(),
         employeeApi.getAll(),
       ]);
 
-      // setTreasuryBalance(balance);
       setEmployees(employeeList);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -129,9 +108,6 @@ export default function EmployeesPage() {
           <Button variant="outline" onClick={payAllEmployees}>
             Select All for Payout
           </Button>
-          {/* <Button variant="outline" onClick={handleSplitter}>
-            Execute Split
-          </Button> */}
         </div>
       </div>
 
@@ -163,7 +139,7 @@ export default function EmployeesPage() {
               <div className="flex items-center space-x-2">
                 <DollarSign className="h-5 w-5 text-primary" />
                 <span className="font-medium">
-                  Total monthly: Andr{totalSelectedSalary.toLocaleString()}
+                  Total monthly: Andr {totalSelectedSalary.toLocaleString()}
                 </span>
               </div>
               {/* <div className="flex items-center space-x-2">

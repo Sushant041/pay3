@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Wallet, Plus, Minus } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { fundTreasuryWithApprove } from '@/utils/payrollContractUtils';
 
 interface TreasuryCardProps {
   balance: number;

@@ -16,7 +16,7 @@ interface TransactionHistoryProps {
   transactions: TreasuryTransaction[];
   className?: string;
 }
-import { MorphHoleskyTestnet } from '@/config';
+
 import { ExternalLink } from 'lucide-react';
 
 export function TransactionHistory({ transactions, className }: TransactionHistoryProps) {

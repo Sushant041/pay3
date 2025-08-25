@@ -11,15 +11,8 @@ import { StatsCard } from '@/components/dashboard/stats-card';
 import { formatDistanceToNow } from 'date-fns';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import {
-  getAllVestings,
-  getEmployeeList,
   formatVestingData,
-  calculateVestingSchedule,
-  removeEmployeeFromESOP,
-  weiToEth
 } from '@/utils/esopsContractUtils';
-import { waitForTransactionReceipt } from '@wagmi/core';
-import { config } from '@/config';
 import { toast } from 'react-toastify';
 
 
@@ -38,7 +31,6 @@ interface VestingData {
   id: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
 export default function ESOPsPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -296,12 +288,12 @@ export default function ESOPsPage() {
                       <div className="mt-3">
                         <div className="flex justify-between text-xs text-muted-foreground mb-1">
                           <span>Vesting Progress</span>
-                          <span>{Math.round((weiToEth(vesting.vestedAmount) / weiToEth(vesting.totalAmount)) * 100)}%</span>
+                          <span>{Math.round(((vesting.vestedAmount) / (vesting.totalAmount)) * 100)}%</span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-1.5">
                           <div
                             className="bg-primary h-1.5 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min((weiToEth(vesting.vestedAmount) / weiToEth(vesting.totalAmount)) * 100, 100)}%` }}
+                            style={{ width: `${Math.min(((vesting.vestedAmount) / (vesting.totalAmount)) * 100, 100)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -335,7 +327,7 @@ export default function ESOPsPage() {
                     <p className="text-sm text-muted-foreground">{employee.designation}</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {employee.salaryUSD.toLocaleString()} andr/month
+                     Andr {employee.salaryUSD.toLocaleString()} /month
                   </div>
                 </div>
               ))}

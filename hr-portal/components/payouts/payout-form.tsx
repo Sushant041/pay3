@@ -15,16 +15,9 @@ import { payoutApi } from '@/lib/api';
 import { Employee } from '@/types';
 import { DollarSign, Users, AlertCircle, Wallet, CheckCircle, Loader2, Clock } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
-import { useAccount } from 'wagmi';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { batchPayEmployees } from '@/utils/payrollContractUtils';
-import { waitForTransactionReceipt } from '@wagmi/core';
-import { config } from '@/config';
 import { LoadingSpinner, LoadingDots } from '@/components/ui/loading-spinner';
-import { MorphHoleskyTestnet } from '@/config';
-import { parseUnits } from 'viem';
 import { useWalletContext } from '@/context';
 import { ExecuteSplitter } from '@/utils/splitter';
 
@@ -43,36 +36,9 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
   const [gasUsed, setGasUsed] = useState('');
   const [processingTime, setProcessingTime] = useState(0);
   const [confirmationTime, setConfirmationTime] = useState(0);
-  const [treasuryBalance, setTreasuryBalance] = useState(0);
 
   const totalAmount = selectedEmployees.reduce((sum, emp) => sum + emp.salaryUSD, 0);
   // const hasInsufficientBalance = totalAmount > treasuryBalance;
-
-  // Load treasury balance when dialog opens
-  // const loadTreasuryBalance = async () => {
-  //   if (isConnected) {
-  //     try {
-  //       const balance = await getTreasuryBalanceUSD();
-  //       setTreasuryBalance(balance);
-  //     } catch (error) {
-  //       console.error('Error loading treasury balance:', error);
-  //     }
-  //   }
-  // };
-
-    const handleSplitter = async () => {
-    if (!Address || !isConnected) {
-      console.log("connect wallet");
-      return;
-    }
-  
-    try {
-      
-    } catch (error) {
-      console.error("Error executing splitter:", error);
-    }
-  };
-  
 
   const handlePayout = async () => {
     if (!isConnected) {
@@ -80,20 +46,12 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
       return;
     }
 
-    // if (hasInsufficientBalance) {
-    //   toast.error('Insufficient treasury balance');
-    //   return;
-    // }
-
     setIsProcessing(true);
-
 
     try {
       // Prepare employee addresses and amounts
       console.log('Selected Employees:', selectedEmployees);
       const employees = selectedEmployees;
-      // const employeeAddresses = selectedEmployees.map(emp => emp.walletAddress);
-      // const amounts = selectedEmployees.map(emp => parseUnits(emp.salaryUSD.toString(), 18).toString().toString());
 
       // // Execute batch pay transaction
       const startTime = Date.now();
@@ -118,31 +76,6 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
 
       setProcessingTime(Math.round(processingTimeMs / 1000));
 
-      // Wait for transaction confirmation and get receipt
-      // const confirmationStartTime = Date.now();
-      // try {
-      //   const receipt = await waitForTransactionReceipt(config, {
-      //     hash: tx as `0x${string}`,
-      //     confirmations: 3
-
-      //   });
-
-      //   const confirmationEndTime = Date.now();
-      //   const confirmationTimeMs = confirmationEndTime - confirmationStartTime;
-      //   setConfirmationTime(confirmationTimeMs / 1000);
-
-      //   const gasUsed = receipt.gasUsed?.toString() || 'Unknown';
-      //   setGasUsed(`${gasUsed} gas`);
-
-      //   // Only show completion after 10 confirmations
-      //   setIsCompleted(true);
-      // } catch (receiptError) {
-      //   console.error('Error getting transaction receipt:', receiptError);
-      //   setGasUsed('Gas info unavailable');
-      //   setConfirmationTime(0);
-      //   setIsCompleted(true);
-      // }
-
       // Create payout record in database
       const payouts = employees.map(employee => ({
         employeeId: employee._id,
@@ -156,11 +89,6 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
 
 
       toast.success('Payout completed successfully!');
-
-
-      // Don't auto-close the modal - let user close it manually
-      // Don't call onClearSelection() here as it might cause the modal to close
-      // Only call onPayoutCreated() to refresh the data
       onPayoutCreated();
 
     } catch (error) {
@@ -250,10 +178,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
                   <p className="text-sm text-muted-foreground">
                     Executing batch payment on blockchain...
                   </p>
-                  {/* <p className="text-xs text-muted-foreground">
-                    Waiting for 3 confirmations...
-                  </p>
-                  <LoadingDots /> */}
+                  <LoadingDots />
                 </div>
               )}
             </div>
@@ -284,7 +209,7 @@ export function PayoutForm({ selectedEmployees, onPayoutCreated, onClearSelectio
                   </div>
                   <div className="pt-2">
                     <a
-                      href={`${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`}
+                      href={`https://explorer.testnet.andromedaprotocol.io/galileo-4/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline text-sm"

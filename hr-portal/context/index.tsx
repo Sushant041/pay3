@@ -1,14 +1,7 @@
 'use client'
 
-import { wagmiAdapter, projectId } from '@/config'
-import { createAppKit } from '@reown/appkit/react'
-import { network } from '@/config'
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, { useState, type ReactNode, createContext, useContext, } from 'react'
-import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
-import '@rainbow-me/rainbowkit/styles.css'
 
 interface WalletContextType {
   isConnected: boolean;
@@ -45,14 +38,8 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
-// Set up queryClient
 const queryClient = new QueryClient()
 
-
-
-if (!projectId) {
-  throw new Error('Project ID is not defined')
-}
 
 const metadata = {
   name: "PayThree",
@@ -62,18 +49,12 @@ const metadata = {
 }
 
 function ContextProvider({ children, cookies }: { children: React.ReactNode; cookies: string | null }) {
-  const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies);
-
   return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
           <WalletProvider> {/* Wrap here */}
             {children}
           </WalletProvider>
-        </RainbowKitProvider>
       </QueryClientProvider>
-    </WagmiProvider>
   );
 }
 

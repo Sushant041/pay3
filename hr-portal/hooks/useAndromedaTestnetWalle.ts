@@ -1,4 +1,3 @@
-// hooks/useAndromedaTestnetWallet.ts
 import { useChain, useManager } from '@cosmos-kit/react'
 import { useMemo } from 'react'
 

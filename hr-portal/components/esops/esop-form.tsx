@@ -25,12 +25,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CreateESOPRequest, Employee } from '@/types';
-import { addEmployeeToESOP, ethToWei } from '@/utils/esopsContractUtils';
 import { TrendingUp, User, Calendar, Award, Clock } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-
-import { waitForTransactionReceipt } from '@wagmi/core'
-import { config } from '@/config';
 import { toast } from 'react-toastify';
 import { CreateVesting } from '@/utils/splitter';
 
@@ -82,21 +78,9 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       // Convert date to timestamp
       const startTime = new Date(data.vestingStart);
 
-      // Convert ETH to wei
-      // const tokenAmountInWei = ethToWei(data.tokenAmount);
       const tokenAmountInUandr = ((data.tokenAmount * 1000000) / data.vestingMonths).toFixed();
       const lockupDurationInMillisec = (data.cliffMonths * 30 * 24 * 60 * 60 * 1000);
       const intervalDurationMs = (30 * 24 * 60 * 60 * 1000);
-
-
-      // Call the smart contract
-      // const tx = await addEmployeeToESOP(
-      //   employee.walletAddress,
-      //   startTime,
-      //   data.cliffMonths,
-      //   data.vestingMonths,
-      //   tokenAmountInWei
-      // );
 
       const tx = await CreateVesting(
         employee._id, 
@@ -107,11 +91,6 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
         (data.tokenAmount * 1000000).toFixed()
       )
       
-      // await tx.wait();
-      // const receipt = await waitForTransactionReceipt(config, {
-      //   hash: tx as `0x${string}`
-
-      // })
       console.log('Transaction receipt:', startTime);
       await onESOPCreated({
         employeeId: data.employeeId,

@@ -30,7 +30,7 @@ const connectWallet = async () => {
     await window.keplr.enable(chainId);
 
     // Get signer
-    const offlineSigner = window.getOfflineSigner(chainId);
+    const offlineSigner = await window.keplr.getOfflineSignerAuto(chainId);
     const accounts = await offlineSigner.getAccounts();
 
     if (accounts && accounts.length > 0) {
@@ -42,12 +42,12 @@ const connectWallet = async () => {
     } else {
       setError('No accounts found. Please connect your wallet.');
     }
-  } catch (err) {
+  } catch (err: any) {
     setError(err.message || 'Failed to connect wallet. Please try again.');
   } finally {
     setIsConnecting(false);
   }
-};s
+};
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -60,7 +60,7 @@ const connectWallet = async () => {
             Connect Your Wallet
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Connect your Ethereum wallet to access the HR Dashboard
+            Connect your wallet to access the HR Dashboard
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -91,7 +91,7 @@ const connectWallet = async () => {
             className="w-full"
             size="lg"
           >
-            {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
+            {isConnecting ? 'Connecting...' : 'Connect Wallet'}
           </Button>
         </CardContent>
       </Card>

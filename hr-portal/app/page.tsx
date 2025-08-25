@@ -6,10 +6,8 @@ import { StatsCard } from '@/components/dashboard/stats-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { employeeApi, payoutApi } from '@/lib/api';
 import { Employee, PayoutBatch } from '@/types';
-import { Users, DollarSign, TrendingUp, Calendar, Wallet, ExternalLink } from 'lucide-react';
-// import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
+import { Users, DollarSign, TrendingUp, Calendar, Wallet, ExternalLink, Coins } from 'lucide-react';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
-import { MorphHoleskyTestnet } from '@/config';
 import { useWalletContext } from '@/context';
 
 export default function Dashboard() {
@@ -18,7 +16,6 @@ export default function Dashboard() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [batches, setBatches] = useState<PayoutBatch[]>([]);
   const [loading, setLoading] = useState(true);
-  const [treasuryBalance, setTreasuryBalance] = useState(0);
 
   useEffect(() => {
     loadDashboardData();

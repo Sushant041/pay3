@@ -43,7 +43,7 @@ export default function SettingsPage() {
       const updateData: UpdateSettingsRequest = {
         organizationName: settings.organizationName,
         tokenAddress: settings.tokenAddress,
-        network: 'andromeda testnet', // Always set to morph network
+        network: 'andromeda testnet', // Always set to andromeda network
         autoPayouts: settings.autoPayouts,
         notifications: settings.notifications,
         databaseUrl: settings.databaseUrl,
@@ -122,16 +122,16 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="network">Network</Label>
-                <Select value="morph" disabled>
+                <Select value="Andromeda Testnet" disabled>
                   <SelectTrigger>
                     <SelectValue placeholder="Select network" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="morph">Andromeda Testnet</SelectItem>
+                    <SelectItem value="Andromeda Testnet">Andromeda Testnet</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  {/* Currently only Morph network is supported. */}
+                  {/* Currently only Andromeda network is supported. */}
                 </p>
               </div>
             </div>
@@ -177,12 +177,12 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="esopToken">ESOP Token</Label>
-                <Select value="morph" disabled>
+                <Select value="Andr" disabled>
                   <SelectTrigger>
                     <SelectValue placeholder="Select token for ESOPs" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="morph">Andr Token</SelectItem>
+                    <SelectItem value="Andr">Andr Token</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
