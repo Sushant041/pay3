@@ -166,12 +166,12 @@ export default function EmployeesPage() {
                   Total monthly: Andr{totalSelectedSalary.toLocaleString()}
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Wallet className="h-5 w-5 text-primary" />
                 <span className="font-medium">
                   Treasury: Andr{treasuryBalance.toLocaleString()}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Buttons / Payout */}

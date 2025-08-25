@@ -20,6 +20,7 @@ import {
 } from '@/utils/esopsContractUtils';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { config } from '@/config';
+import { toast } from 'react-toastify';
 
 
 interface VestingData {
@@ -34,6 +35,7 @@ interface VestingData {
   cliffReached: boolean;
   fullyVested: boolean;
   claimableAmount: number;
+  id: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -81,33 +83,6 @@ export default function ESOPsPage() {
     }
   };
 
-  const loadVestingsFromContract = async (): Promise<VestingData[]> => {
-    try {
-      const [employeeAddresses, vestingData] = await getAllVestings();
-      const formattedVestings: VestingData[] = [];
-
-      for (let i = 0; i < employeeAddresses.length; i++) {
-        const employeeAddress = employeeAddresses[i];
-        const vesting = vestingData[i];
-
-        if (vesting && employeeAddress !== '0x0000000000000000000000000000000000000000') {
-          const formatted = formatVestingData(vesting);
-          if (formatted) {
-            formattedVestings.push({
-              employee: employeeAddress,
-              ...formatted
-            });
-          }
-        }
-      }
-
-      return formattedVestings;
-    } catch (error) {
-      console.error('Error loading vestings from contract:', error);
-      return [];
-    }
-  };
-
   const loadVestingsFromAPI = async (): Promise<VestingData[]> => {
     try {
       const response = await fetch("/api/esops", { method: "GET" });
@@ -116,26 +91,26 @@ export default function ESOPsPage() {
       const vestingsresponse = await response.json();
 
       console.log(vestingsresponse.data[0], "vesting")
-      
-      if(!vestingsresponse.data)return [];
+
+      if (!vestingsresponse.data) return [];
 
       return vestingsresponse?.data?.map((vesting: any) => {
-          const formatted = formatVestingData({
-            totalAmount: vesting.tokenAmount,
-            claimed: vesting.claimed || 0,
-            start: Math.floor(new Date(vesting.vestingStart).getTime() / 1000),
-            cliff: vesting.cliffMonths,
-            duration: vesting.vestingMonths
-          });
+        const formatted = formatVestingData({
+          totalAmount: vesting.tokenAmount,
+          claimed: vesting.claimed || 0,
+          start: Math.floor(new Date(vesting.vestingStart).getTime() / 1000),
+          cliff: vesting.cliffMonths,
+          duration: vesting.vestingMonths
+        });
 
-          if (!formatted) return null;
-
-          return {
-            employee: vesting.employeeId.walletAddress, // OR include full employee object
-            ...formatted,
-            employeeDetails: vesting.employeeId // optional full employee data
-          };
-        })
+        if (!formatted) return null;
+        return {
+          employee: vesting.employeeId.walletAddress, // OR include full employee object
+          ...formatted,
+          employeeDetails: vesting.employeeId,
+          id: vesting._id // optional full employee data
+        };
+      })
         .filter((v: any) => v !== null); // remove invalid entries
     } catch (error) {
       console.error("Error loading vestings from API:", error);
@@ -143,18 +118,21 @@ export default function ESOPsPage() {
     }
   };
 
-  const handleRemoveEmployee = async (employeeAddress: string) => {
+  async function deleteVesting(id: string) {
     try {
-      const tx = await removeEmployeeFromESOP(employeeAddress);
-      const receipt = await waitForTransactionReceipt(config, {
-        hash: tx as `0x${string}`
+      const res = await fetch(`/api/esops/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      console.log(data.message);
 
-      })
+      toast.success(data.message);
       await loadData();
     } catch (error) {
-      console.error('Error removing employee from ESOP:', error);
+      toast.error("Failed to remove esop");
+      console.log(error, "Failed to remove esop");
     }
-  };
+  }
 
   const totalTokens = vestings.reduce((sum, vesting) => sum + (vesting.totalAmount), 0);
   const activeEsops = vestings.filter(vesting => {
@@ -266,11 +244,11 @@ export default function ESOPsPage() {
                           <div className="grid grid-cols-2 gap-4 mb-3">
                             <div>
                               <p className="text-xs font-medium text-muted-foreground">Total Tokens (ANDR)</p>
-                              <p className="text-base font-semibold text-foreground">{weiToEth(vesting.totalAmount).toFixed(6)}</p>
+                              <p className="text-base font-semibold text-foreground">{(vesting.totalAmount).toFixed(6)}</p>
                             </div>
                             <div>
                               <p className="text-xs font-medium text-muted-foreground">Vested Tokens (ANDR)</p>
-                              <p className="text-base font-semibold text-foreground">{weiToEth(vesting.vestedAmount).toFixed(6)}</p>
+                              <p className="text-base font-semibold text-foreground">{(vesting.vestedAmount).toFixed(6)}</p>
                             </div>
                           </div>
 
@@ -294,8 +272,8 @@ export default function ESOPsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleRemoveEmployee(vesting.employee)}
-                            className="mb-2"
+                            onClick={() => deleteVesting(vesting.id)}
+                            className="mb-2 hover:bg-red-400"
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
@@ -357,7 +335,7 @@ export default function ESOPsPage() {
                     <p className="text-sm text-muted-foreground">{employee.designation}</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    ${employee.salaryUSD.toLocaleString()}/month
+                    {employee.salaryUSD.toLocaleString()} andr/month
                   </div>
                 </div>
               ))}

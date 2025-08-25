@@ -22,7 +22,11 @@ export function StatsCard({ title, value, description, icon: Icon, trend }: Stat
         <Icon className="h-4 w-4 text-primary" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="flex items-center space-x-2">
+          <span className="text-2xl font-bold">{value}</span>
+          <span className="text-md text-muted-foreground tracking-tight font-normal">ANDR</span>
+        </div>
+
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>
         )}

@@ -47,7 +47,7 @@ interface ESOPPayload {
   tokenAmount: number;
   vestingMonths: number;
   cliffMonths: number;
-  vestingStart: number;
+  vestingStart: Date;
   txHash: string;
 }
 
@@ -80,7 +80,7 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       }
 
       // Convert date to timestamp
-      const startTime = Math.floor(new Date(data.vestingStart).getTime() / 1000);
+      const startTime = new Date(data.vestingStart);
 
       // Convert ETH to wei
       // const tokenAmountInWei = ethToWei(data.tokenAmount);
@@ -98,28 +98,28 @@ export function ESOPForm({ employees, onESOPCreated }: ESOPFormProps) {
       //   tokenAmountInWei
       // );
 
-      // const tx = await CreateVesting(
-      //   employee._id, 
-      //   employee, 
-      //   tokenAmountInUandr, 
-      //   lockupDurationInMillisec, 
-      //   intervalDurationMs, 
-      //   (data.tokenAmount * 1000000).toFixed()
-      // )
+      const tx = await CreateVesting(
+        employee._id, 
+        employee, 
+        tokenAmountInUandr, 
+        lockupDurationInMillisec, 
+        intervalDurationMs, 
+        (data.tokenAmount * 1000000).toFixed()
+      )
       
       // await tx.wait();
       // const receipt = await waitForTransactionReceipt(config, {
       //   hash: tx as `0x${string}`
 
       // })
-      // console.log('Transaction receipt:', tx);
+      console.log('Transaction receipt:', startTime);
       await onESOPCreated({
         employeeId: data.employeeId,
         tokenAmount: data.tokenAmount,
         vestingMonths: data.vestingMonths,
         cliffMonths: data.cliffMonths,
         vestingStart: startTime,
-        txHash: "tx.transactionHash"
+        txHash: tx.transactionHash
       });
    
       reset();

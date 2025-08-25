@@ -3,88 +3,8 @@ import { config } from "@/config";
 import { payrollContractABI , mockUSDCABI} from './abis';
 import { PAYROLL_CONTRACT_ADDRESS ,MOCK_USDC_ADDRESS} from './addresses';
 
-function normalizeProxyData(data: any): any {
-  return JSON.parse(
-    JSON.stringify(data, (key, value) => (typeof value === 'bigint' ? value.toString() : value))
-  );
-}
 
-// Get submission fee
-export async function getSubmissionFee(): Promise<string> {
-  const fee: any = await readContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'SUBMISSION_FEE',
-  });
-  return fee.toString();
-}
 
-// Submit music
-export async function submitMusic(musicUrl: string, theme: string, prompt: string): Promise<any> {
-  const submissionFee: any = await getSubmissionFee();
-  return await writeContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'submitMusic',
-    args: [musicUrl, theme, prompt],
-    value: BigInt(submissionFee),
-  });
-}
-
-// Get contest submissions
-export async function getContestDetails(): Promise<any[]> {
-  const result: any = await readContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'getSubmissions',
-  });
-
-  return normalizeProxyData(result);
-}
-
-// Get winners
-export async function getWinners(): Promise<any[]> {
-  const result: any = await readContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'getWinners',
-  });
-
-  console.log("Winners: ", normalizeProxyData(result));
-
-  return normalizeProxyData(result);
-}
-
-// Vote on submission
-export async function voteOnSubmission(submissionIndex: number): Promise<any> {
-  return await writeContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'vote',
-    args: [submissionIndex],
-  });
-}
-
-// Get current theme
-export async function getCurrentTheme(): Promise<string> {
-  const result: any = await readContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'currentTheme',
-  });
-
-  return result;
-}
-
-// Mint music NFT
-export async function mintMusicNFT(winnerIndex: number, uri: string): Promise<any> {
-  return await writeContract(config, {
-    abi: payrollContractABI,
-    address: PAYROLL_CONTRACT_ADDRESS,
-    functionName: 'mintMusicNFT',
-    args: [winnerIndex, uri],
-  });
-}
 
 // Treasury Functions
 

@@ -85,3 +85,24 @@ export async function GET(req: Request) {
     return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await connectDB();
+    const { id } = params;
+
+    const deleted = await Esop.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return Response.json({ message: "Vesting record not found" }, { status: 404 });
+    }
+
+    return Response.json({ message: "Vesting record deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting vesting:", error);
+    return Response.json({ message: "Server error", error }, { status: 500 });
+  }
+}

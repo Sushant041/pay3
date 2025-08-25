@@ -43,7 +43,7 @@ export default function SettingsPage() {
       const updateData: UpdateSettingsRequest = {
         organizationName: settings.organizationName,
         tokenAddress: settings.tokenAddress,
-        network: 'morph', // Always set to morph network
+        network: 'andr', // Always set to morph network
         autoPayouts: settings.autoPayouts,
         notifications: settings.notifications,
         databaseUrl: settings.databaseUrl,

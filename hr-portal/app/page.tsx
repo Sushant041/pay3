@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { employeeApi, payoutApi } from '@/lib/api';
 import { Employee, PayoutBatch } from '@/types';
 import { Users, DollarSign, TrendingUp, Calendar, Wallet, ExternalLink } from 'lucide-react';
-import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
+// import { getTreasuryBalanceUSD } from '@/utils/mockUSDCUtils';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import { MorphHoleskyTestnet } from '@/config';
 import { useWalletContext } from '@/context';
@@ -24,20 +24,6 @@ export default function Dashboard() {
     loadDashboardData();
   }, []);
 
-  // useEffect(() => {
-  //   if (isConnected) {
-  //     loadTreasuryBalance();
-  //   }
-  // }, [isConnected]);
-
-  // const loadTreasuryBalance = async () => {
-  //   try {
-  //     const balance = await getTreasuryBalanceUSD();
-  //     setTreasuryBalance(balance);
-  //   } catch (error) {
-  //     console.error('Error loading treasury balance:', error);
-  //   }
-  // };
 
   const loadDashboardData = async () => {
     try {
@@ -81,28 +67,28 @@ export default function Dashboard() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatsCard
           title="Total Employees"
           value={employees.length}
           description="Active employee count"
           icon={Users}
         />
-        <StatsCard
+        {/* <StatsCard
           title="Treasury Balance"
-          value={`$${treasuryBalance.toLocaleString()}`}
+          value={`${treasuryBalance.toLocaleString()}`}
           description="Available for payouts"
           icon={Wallet}
-        />
+        /> */}
         <StatsCard
           title="Total Payouts"
-          value={`$${totalPayouts.toLocaleString()}`}
+          value={`${totalPayouts.toLocaleString()}`}
           description="All-time payout amount"
           icon={DollarSign}
         />
         <StatsCard
           title="Average Salary"
-          value={`$${Math.round(averageSalary).toLocaleString()}`}
+          value={`${Math.round(averageSalary).toLocaleString()}`}
           description="Annual average"
           icon={TrendingUp}
         />
@@ -127,7 +113,7 @@ export default function Dashboard() {
                     <p className="text-sm text-muted-foreground">{employee.designation}</p>
                   </div>
                   <div className="text-sm font-medium text-foreground">
-                    ${employee.salaryUSD.toLocaleString()}
+                    {employee.salaryUSD.toLocaleString()} ANDR
                   </div>
                 </div>
               ))}
@@ -154,7 +140,7 @@ export default function Dashboard() {
 
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium leading-none text-foreground">
-                      ${batch.totalAmount.toLocaleString()}
+                      {batch.totalAmount.toLocaleString()} ANDR
                     </p>
 
                     <div className="inline-flex items-center space-x-1 font-mono text-xs text-muted-foreground">

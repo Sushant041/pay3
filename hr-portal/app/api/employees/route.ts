@@ -89,34 +89,3 @@ export async function GET() {
   }
 }
 
-export async function PATCH(req: Request) {
-  try {
-    await connectDB();
-    const data = await req.json();
-    const { employeeId, vestingContractAddress } = data;
-
-    if (!employeeId) {
-      return NextResponse.json(
-        { success: false, error: "Employee ID is required" },
-        { status: 400 }
-      );
-    }
-
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      employeeId,
-      { $set: { vestingContractAddress } },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedEmployee) {
-      return NextResponse.json(
-        { success: false, error: "Employee not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ success: true, employee: updatedEmployee });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
-  }
-}

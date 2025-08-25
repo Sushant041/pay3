@@ -43,7 +43,7 @@ export default function SettingsPage() {
       const updateData: UpdateSettingsRequest = {
         organizationName: settings.organizationName,
         tokenAddress: settings.tokenAddress,
-        network: 'morph', // Always set to morph network
+        network: 'andromeda testnet', // Always set to morph network
         autoPayouts: settings.autoPayouts,
         notifications: settings.notifications,
         databaseUrl: settings.databaseUrl,
@@ -59,35 +59,6 @@ export default function SettingsPage() {
     }
   };
 
-  const handleTestConnection = async () => {
-    if (!settings) return;
-    
-    setLoading(true);
-    try {
-      const response = await fetch('/api/settings/test-connection', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tokenAddress: settings.tokenAddress,
-          network: 'morph',
-        }),
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        toast.success(data.message);
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      toast.error('Failed to connect to the Morph network.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (initialLoading) {
     return (
@@ -156,11 +127,11 @@ export default function SettingsPage() {
                     <SelectValue placeholder="Select network" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="morph">Morph Network</SelectItem>
+                    <SelectItem value="morph">Andromeda Testnet</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Currently only Morph network is supported.
+                  {/* Currently only Morph network is supported. */}
                 </p>
               </div>
             </div>
@@ -175,7 +146,7 @@ export default function SettingsPage() {
               Token Configuration
             </CardTitle>
             <CardDescription>
-              Select the stable coin for employee salary payments and ESOP tokens.
+              Select the token for employee salary payments and ESOP tokens.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -183,19 +154,19 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="salaryToken">Employee Salary Token</Label>
-                <Select value={'usdt'} onValueChange={(value) => setSettings({ ...settings, tokenAddress: value })}>
+                <Select value={'andr'} onValueChange={(value) => setSettings({ ...settings, tokenAddress: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select stable coin for salaries" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="usdt">Tether (USDT)</SelectItem>
-                    <SelectItem value="usda" disabled>USD Coin (USDC) - Coming Soon</SelectItem>
-                    <SelectItem value="usdc" disabled>Dai (DAI) - Coming Soon</SelectItem>
-                    <SelectItem value="dai" disabled>Avalon USDa (USDA) - Coming Soon</SelectItem>
+                    <SelectItem value="andr">Andr Token</SelectItem>
+                    <SelectItem value="usdt" disabled>USDT - Coming Soon</SelectItem>
+                    {/* <SelectItem value="usdc" disabled>Dai (DAI) - Coming Soon</SelectItem>
+                    <SelectItem value="dai" disabled>Avalon USDa (USDA) - Coming Soon</SelectItem> */}
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Currently only USDT is supported. Other stable coins will be available soon.
+                  Currently only Andr token is supported. Other stable coins will be available soon.
                 </p>
               </div>
             </div>
@@ -211,11 +182,11 @@ export default function SettingsPage() {
                     <SelectValue placeholder="Select token for ESOPs" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="morph">Morph Coin (Native)</SelectItem>
+                    <SelectItem value="morph">Andr Token</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  ESOPs are distributed using the native Morph coin.
+                  ESOPs are distributed using the Andr token.
                 </p>
               </div>
             </div>

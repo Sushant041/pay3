@@ -91,13 +91,21 @@ export function PayoutHistory() {
                         <span className="font-mono text-sm">
                           {batch.txHash.slice(0, 10)}...{batch.txHash.slice(-8)}
                         </span>
-                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                        {/* <Button variant="ghost" size="icon" className="h-6 w-6">
                           <ExternalLink className="h-3 w-3" />
-                        </Button>
+                        </Button> */}
+                        <a
+                        href={`https://explorer.testnet.andromedaprotocol.io/galileo-4/tx/${batch.txHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium">${batch.totalAmount.toLocaleString()}</span>
+                      <span className="font-medium">{batch.totalAmount.toLocaleString()} ANDR</span>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatDistanceToNow(new Date(batch.createdAt), { addSuffix: true })}
@@ -158,22 +166,22 @@ export function PayoutHistory() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <span className="font-medium">${payout.amountUSD.toLocaleString()}</span>
+                          <span className="font-medium">{payout.amountUSD.toLocaleString()} ANDR</span>
                         </TableCell>
                         <TableCell>
-                          <Badge 
+                          <Badge
                             variant={payout.status === 'completed' ? 'default' : 'secondary'}
                           >
                             {payout.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                        <span
-  className="font-mono text-sm"
-  title={employee.walletAddress} // show full address on hover
->
-  {employee.walletAddress.slice(0, 6)}...{employee.walletAddress.slice(-4)}
-</span>
+                          <span
+                            className="font-mono text-sm"
+                            title={employee.walletAddress} // show full address on hover
+                          >
+                            {employee.walletAddress.slice(0, 6)}...{employee.walletAddress.slice(-4)}
+                          </span>
 
                         </TableCell>
                       </TableRow>

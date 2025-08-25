@@ -73,7 +73,7 @@ export default function PayoutsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Payouts"
-          value={`$${totalPayouts.toLocaleString()}`}
+          value={`${totalPayouts.toLocaleString()}`}
           description="All-time amount"
           icon={DollarSign}
         />
@@ -85,7 +85,7 @@ export default function PayoutsPage() {
         />
         <StatsCard
           title="Average Batch"
-          value={`$${Math.round(averageBatchAmount).toLocaleString()}`}
+          value={`${Math.round(averageBatchAmount).toLocaleString()}`}
           description="Per transaction"
           icon={TrendingUp}
         />

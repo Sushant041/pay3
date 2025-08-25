@@ -88,23 +88,23 @@ import { toast } from "react-toastify";
 
 
 async function updateVesting(employeeId: string, vestingContractAddress: string) {
-    try {
-      const res = await fetch("/api/employees", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employeeId, vestingContractAddress }),
-      });
+  try {
+    const res = await fetch(`/api/employees/${employeeId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vestingContractAddress }),
+    });
 
-      const data = await res.json();
-      if (data.success) {
-        console.log("Employee updated:", data.employee);
-      } else {
-        console.error("Update failed:", data.error);
-      }
-    } catch (err) {
-      console.error("Fetch error:", err);
+    const data = await res.json();
+    if (data.success) {
+      console.log("Employee updated:", data.employee);
+    } else {
+      console.error("Update failed:", data.error);
     }
+  } catch (err) {
+    console.error("Fetch error:", err);
   }
+}
 
 export const ExecuteSplitter = async (
   amount: string,
@@ -212,7 +212,7 @@ const CreateNewVesting = async (employee: Employee, Name: string) => {
     };
 
     const msg: Msg = {
-      name: Name+"1",
+      name: Name,
       app_components: [
         {
           name: "vesting-0",
@@ -232,7 +232,7 @@ const CreateNewVesting = async (employee: Employee, Name: string) => {
     )
     console.log(res);
     const vestingContractAddress = getAdoAddressByCodeId(res, "2387");
-    
+
     await updateVesting(employee._id, vestingContractAddress)
     return vestingContractAddress;
   } catch (error) {
@@ -241,7 +241,7 @@ const CreateNewVesting = async (employee: Employee, Name: string) => {
   }
 }
 
-export async function CreateVesting (Name: string, employee: Employee, amount: string, lockup_duration: number, release_duration: number, funds: string) {
+export async function CreateVesting(Name: string, employee: Employee, amount: string, lockup_duration: number, release_duration: number, funds: string) {
   try {
     const adoAddress = employee.vestingContractAddress ? employee.vestingContractAddress : await CreateNewVesting(employee, Name);
     if (adoAddress === "") {

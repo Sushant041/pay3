@@ -40,11 +40,6 @@ const navigation = [
     icon: DollarSign,
   },
   {
-    name: 'Treasury',
-    href: '/treasury',
-    icon: Wallet,
-  },
-  {
     name: 'Settings',
     href: '/settings',
     icon: Settings,
