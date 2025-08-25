@@ -7,10 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { employeeApi, payoutApi } from '@/lib/api';
 import { Employee, Payout } from '@/types';
 import { DollarSign, TrendingUp, Calendar, Wallet, Gift, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { useAccount } from 'wagmi';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
-import { getVestedAmount, getAllVestings, calculateVestingSchedule, weiToEth, formatVestingData } from '@/utils/esopsContractUtils';
-import { MorphHoleskyTestnet } from '@/config';
+import { formatVestingData } from '@/utils/esopsContractUtils';
+import { useWalletContext } from '@/context';
 
 interface EmployeeDashboardData {
   employee: Employee | null;
@@ -21,8 +20,24 @@ interface EmployeeDashboardData {
   lastPayout: Payout | null;
 }
 
+interface VestingData {
+  employee: string;
+  totalAmount: number;
+  claimed: number;
+  start: number;
+  cliff: number;
+  duration: number;
+  vestedAmount: number;
+  unvestedAmount: number;
+  cliffReached: boolean;
+  fullyVested: boolean;
+  claimableAmount: number;
+  id: string;
+}
+
 export default function Dashboard() {
-  const { isConnected, address } = useAccount();
+  // const { isConnected, address } = useAccount();
+  const { isConnected, Address} = useWalletContext()
   const [data, setData] = useState<EmployeeDashboardData>({
     employee: null,
     payouts: [],
@@ -35,10 +50,45 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isConnected && address) {
+    if (isConnected && Address) {
       loadEmployeeDashboard();
     }
-  }, [isConnected, address]);
+  }, [isConnected, Address]);
+
+  const loadVestingsFromAPI = async (): Promise<VestingData[]> => {
+    try {
+      const response = await fetch("/api/esops", { method: "GET" });
+      if (!response.ok) throw new Error("Failed to fetch vestings");
+
+      const vestingsresponse = await response.json();
+
+      // console.log(vestingsresponse, "vesting")
+
+      if (!vestingsresponse.esops) return [];
+
+      return vestingsresponse?.esops?.map((vesting: any) => {
+        const formatted = formatVestingData({
+          totalAmount: vesting.tokenAmount,
+          claimed: vesting.claimed || 0,
+          start: Math.floor(new Date(vesting.vestingStart).getTime() / 1000),
+          cliff: vesting.cliffMonths,
+          duration: vesting.vestingMonths
+        });
+
+        if (!formatted) return null;
+        return {
+          employee: vesting.employeeId.walletAddress, // OR include full employee object
+          ...formatted,
+          employeeDetails: vesting.employeeId,
+          id: vesting._id // optional full employee data
+        };
+      })
+        .filter((v: any) => v !== null); // remove invalid entries
+    } catch (error) {
+      console.error("Error loading vestings from API:", error);
+      return [];
+    }
+  };  
 
   const loadEmployeeDashboard = async () => {
     try {
@@ -46,7 +96,7 @@ export default function Dashboard() {
       setError(null);
 
       // Get employee data
-      const employee = await employeeApi.getByWalletAddress(address!);
+      const employee = await employeeApi.getByWalletAddress(Address!);
       if (!employee) {
         setError('Employee not found');
         setLoading(false);
@@ -62,17 +112,20 @@ export default function Dashboard() {
 
       try {
         // Get all vestings and filter for current user
-        const [employeeAddresses, vestingDataArray] = await getAllVestings();
-        
+        // const [employeeAddresses, vestingDataArray] = await getAllVestings();
+        const vestingdata = await loadVestingsFromAPI();
+
+        console.log(vestingdata, "vesting 1")
         // Find current user's vesting data
-        const userIndex = employeeAddresses.findIndex((addr: string) => addr.toLowerCase() === address!.toLowerCase());
+        const userIndex = vestingdata.findIndex((emp: any) => emp.employee.toLowerCase() === Address!.toLowerCase());
         
         if (userIndex !== -1) {
-          const userVestingRaw = vestingDataArray[userIndex];
-          vestingData = formatVestingData(userVestingRaw);
+          // const userVestingRaw = vestingDataArray[userIndex];
+          vestingData = vestingdata[userIndex]
           
+          console.log(vestingData, "vesting 2");
           if (vestingData) {
-            vestedAmount = weiToEth(Number(vestingData.vestedAmount));
+            vestedAmount = (Number(vestingData.vestedAmount));
           }
         }
       } catch (esopError) {
@@ -107,7 +160,7 @@ export default function Dashboard() {
   const calculateVestingProgress = () => {
     if (!data.vestingData) return { vested: 0, total: 0, percentage: 0 };
     
-    const totalAmount = weiToEth(Number(data.vestingData.totalAmount) || 0);
+    const totalAmount = (Number(data.vestingData.totalAmount) || 0);
     const percentage = totalAmount > 0 ? (data.vestedAmount / totalAmount) * 100 : 0;
     
     return {
@@ -139,7 +192,7 @@ export default function Dashboard() {
 
   // Helper for explorer link
   const getExplorerLink = (txHash: string) =>
-    `${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`;
+    `https://explorer.testnet.andromedaprotocol.io/galileo-4/tx/${txHash}`;
 
   if (loading) {
     return (
@@ -189,13 +242,13 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Monthly Salary"
-          value={`$${data.employee?.salaryUSD.toLocaleString()}`}
+          value={`${data.employee?.salaryUSD.toLocaleString()}`}
           description="Your monthly compensation"
           icon={DollarSign}
         />
         <StatsCard
           title="Total Payouts"
-          value={`$${data.payouts.reduce((sum, p) => sum + p.amountUSD, 0).toLocaleString()}`}
+          value={`${data.payouts.reduce((sum, p) => sum + p.amountUSD, 0).toLocaleString()}`}
           description="All-time received"
           icon={Wallet}
         />

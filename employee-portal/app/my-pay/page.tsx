@@ -6,22 +6,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { employeeApi, payoutApi } from '@/lib/api';
 import { Payout } from '@/types';
 import { DollarSign, Clock, CheckCircle, AlertCircle, TrendingUp, Calendar } from 'lucide-react';
-import { useAccount } from 'wagmi';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
-import { MorphHoleskyTestnet } from '@/config';
+import { useWalletContext } from '@/context';
 
 export default function MyPayPage() {
-  const { isConnected, address } = useAccount();
+  // const { isConnected, address } = useAccount();
+  const { isConnected, Address } = useWalletContext()
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isConnected && address) {
+    if (isConnected && Address) {
       loadMyPayouts();
     }
-  }, [isConnected, address]);
+  }, [isConnected, Address]);
 
   const loadMyPayouts = async () => {
     try {
@@ -29,7 +29,7 @@ export default function MyPayPage() {
       setError(null);
 
       // First get employee data by wallet address
-      const employee = await employeeApi.getByWalletAddress(address!);
+      const employee = await employeeApi.getByWalletAddress(Address!);
       if (!employee) {
         setError('Employee not found');
         setPayouts([]);
@@ -49,8 +49,6 @@ export default function MyPayPage() {
     }
   };
 
-  const getExplorerLink = (txHash: string) =>
-    `${MorphHoleskyTestnet.blockExplorers.default.url}/tx/${txHash}`;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,7 +137,7 @@ export default function MyPayPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalReceived.toLocaleString()}</div>
+            <div className="text-2xl font-bold">Andr {totalReceived.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               All-time completed payouts
             </p>
@@ -152,7 +150,7 @@ export default function MyPayPage() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${pendingAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold">Andr {pendingAmount.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               Pending payouts
             </p>
@@ -199,13 +197,13 @@ export default function MyPayPage() {
                         </Badge>
                       </div>
                       <div>
-                        <p className="font-medium">${payout.amountUSD.toLocaleString()}</p>
+                        <p className="font-medium">Andr {payout.amountUSD.toLocaleString()}</p>
                         <p className="text-sm text-muted-foreground">
                           {formatDistanceToNow(new Date(payout.createdAt), { addSuffix: true })}
                         </p>
                         {batchData && (
                           <p className="text-xs text-muted-foreground">
-                            Batch: ${batchAmount?.toLocaleString() || 'N/A'}
+                            Batch: Andr {batchAmount?.toLocaleString() || 'N/A'}
                           </p>
                         )}
                       </div>
@@ -213,7 +211,7 @@ export default function MyPayPage() {
                     <div className="text-right">
                       {txHash && (
                         <a
-                          href={getExplorerLink(txHash)}
+                          href={`https://explorer.testnet.andromedaprotocol.io/galileo-4/tx/${txHash}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs font-mono text-blue-600 hover:underline"

@@ -111,6 +111,7 @@ export default function ESOPsPage() {
   };
 
   async function deleteVesting(id: string) {
+    setLoading(true)
     try {
       const res = await fetch(`/api/esops/${id}`, {
         method: "DELETE",
@@ -123,6 +124,9 @@ export default function ESOPsPage() {
     } catch (error) {
       toast.error("Failed to remove esop");
       console.log(error, "Failed to remove esop");
+    }
+    finally{
+      setLoading(false);
     }
   }
 

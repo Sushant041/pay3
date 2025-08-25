@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     
     // Mock validation
     const isValidAddress = tokenAddress && tokenAddress.startsWith('0x') && tokenAddress.length === 42;
-    const isValidNetwork = ['ethereum', 'polygon', 'arbitrum', 'optimism'].includes(network);
+    const isValidNetwork = ['Andromeda'].includes(network);
     
     if (!isValidAddress) {
       return NextResponse.json({ 

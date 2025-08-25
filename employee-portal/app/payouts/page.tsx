@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PayoutHistory } from '@/components/payouts/payout-history';
 import { employeeApi, payoutApi } from '@/lib/api';
 import { Employee, PayoutBatch } from '@/types';

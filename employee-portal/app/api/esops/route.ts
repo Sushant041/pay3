@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     await connectDB();
-    const esops = await Esop.find().populate('employeeId', 'name designation');
+    const esops = await Esop.find().populate('employeeId', 'name designation walletAddress vestingContractAddress');
     return NextResponse.json({ success: true, esops });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });

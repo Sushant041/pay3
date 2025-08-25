@@ -43,7 +43,7 @@ export default function SettingsPage() {
       const updateData: UpdateSettingsRequest = {
         organizationName: settings.organizationName,
         tokenAddress: settings.tokenAddress,
-        network: 'andr', // Always set to morph network
+        network: 'andromeda', // Always set to andromeda network
         autoPayouts: settings.autoPayouts,
         notifications: settings.notifications,
         databaseUrl: settings.databaseUrl,
@@ -71,7 +71,7 @@ export default function SettingsPage() {
         },
         body: JSON.stringify({
           tokenAddress: settings.tokenAddress,
-          network: 'morph',
+          network: 'andromeda',
         }),
       });
       
@@ -83,7 +83,7 @@ export default function SettingsPage() {
         toast.error(data.error);
       }
     } catch (error) {
-      toast.error('Failed to connect to the Morph network.');
+      toast.error('Failed to connect to the Andromeda network.');
     } finally {
       setLoading(false);
     }
@@ -151,16 +151,16 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="network">Network</Label>
-                <Select value="morph" disabled>
+                <Select value="Andromeda" disabled>
                   <SelectTrigger>
                     <SelectValue placeholder="Select network" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="morph">Morph Network</SelectItem>
+                    <SelectItem value="Andromeda">Andromeda Network</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Currently only Morph network is supported.
+                  Currently only Andromeda network is supported.
                 </p>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function SettingsPage() {
                     <SelectValue placeholder="Select stable coin for salaries" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="usdt">Tether (USDT)</SelectItem>
+                    <SelectItem value="Andr">Andr</SelectItem>
                     <SelectItem value="usda" disabled>USD Coin (USDC) - Coming Soon</SelectItem>
                     <SelectItem value="usdc" disabled>Dai (DAI) - Coming Soon</SelectItem>
                     <SelectItem value="dai" disabled>Avalon USDa (USDA) - Coming Soon</SelectItem>
@@ -206,16 +206,16 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="esopToken">ESOP Token</Label>
-                <Select value="morph" disabled>
+                <Select value="Andromeda" disabled>
                   <SelectTrigger>
                     <SelectValue placeholder="Select token for ESOPs" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="morph">Morph Coin (Native)</SelectItem>
+                    <SelectItem value="Andr">Andr Token</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  ESOPs are distributed using the native Morph coin.
+                  ESOPs are distributed using the native Andromeda coin.
                 </p>
               </div>
             </div>

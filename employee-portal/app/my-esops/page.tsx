@@ -7,8 +7,10 @@ import { useAccount } from 'wagmi';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { getVestedAmount, getAllVestings, formatVestingData, weiToEth, claimVestedTokens } from '@/utils/esopsContractUtils';
+import { formatVestingData } from '@/utils/esopsContractUtils';
 import { toast } from 'react-toastify';
+import { useWalletContext } from '@/context';
+import { claimAllTokens } from '@/utils/claimEsops';
 
 interface ESOPData {
   vestedAmount: number;
@@ -18,9 +20,11 @@ interface ESOPData {
   vestingProgress: number;
   status: string;
   statusColor: string;
+  vestedContractAddress: string;
 }
 
 interface VestingData {
+  id: string;
   employee: string;
   totalAmount: number;
   claimed: number;
@@ -32,91 +36,110 @@ interface VestingData {
   cliffReached: boolean;
   fullyVested: boolean;
   claimableAmount: number;
+  employeeDetails: {
+    designation: string;
+    vestingContractAddress: string;
+    name: string;
+    _id: string;
+    walletAddress: string;
+  };
 }
 
 export default function MyESOPsPage() {
-  const { isConnected, address } = useAccount();
+  // const { isConnected, address } = useAccount();
+  const { isConnected, Address } = useWalletContext();
   const [esopData, setEsopData] = useState<ESOPData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
+  const [myVestings, setMyVestings] = useState<VestingData>();
 
   useEffect(() => {
-    if (isConnected && address) {
+    if (isConnected && Address) {
       loadMyESOPs();
     }
-  }, [isConnected, address]);
+  }, [isConnected, Address]);
 
-    const loadVestingsFromContract = async (): Promise<VestingData[]> => {
+  const loadVestingsFromAPI = async (): Promise<VestingData[]> => {
     try {
-      const [employeeAddresses, vestingData] = await getAllVestings();
-      const formattedVestings: VestingData[] = [];
-      
-      for (let i = 0; i < employeeAddresses.length; i++) {
-        const employeeAddress = employeeAddresses[i];
-        const vesting = vestingData[i];
-        
-        if (vesting && employeeAddress !== '0x0000000000000000000000000000000000000000') {
-          const formatted = formatVestingData(vesting);
-          if (formatted) {
-            formattedVestings.push({
-              employee: employeeAddress,
-              ...formatted
-            });
-          }
-        }
-      }
-      
-      return formattedVestings;
+      const response = await fetch("/api/esops", { method: "GET" });
+      if (!response.ok) throw new Error("Failed to fetch vestings");
+
+      const vestingsresponse = await response.json();
+
+      console.log(vestingsresponse, "vesting")
+
+      if (!vestingsresponse.esops) return [];
+
+      return vestingsresponse?.esops?.map((vesting: any) => {
+        const formatted = formatVestingData({
+          totalAmount: vesting.tokenAmount,
+          claimed: vesting.claimed || 0,
+          start: Math.floor(new Date(vesting.vestingStart).getTime() / 1000),
+          cliff: vesting.cliffMonths,
+          duration: vesting.vestingMonths
+        });
+
+        if (!formatted) return null;
+        return {
+          employee: vesting.employeeId.walletAddress, // OR include full employee object
+          ...formatted,
+          employeeDetails: vesting.employeeId,
+          id: vesting._id // optional full employee data
+        };
+      })
+        .filter((v: any) => v !== null); // remove invalid entries
     } catch (error) {
-      console.error('Error loading vestings from contract:', error);
+      console.error("Error loading vestings from API:", error);
       return [];
     }
   };
 
- const loadMyESOPs = async () => {
-  try {
-    setLoading(true);
-    setError(null);
+  const loadMyESOPs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    const vestings = await loadVestingsFromContract();
-    console.log("All Vestings:", vestings);
+      const vestings = await loadVestingsFromAPI();
+      console.log("All Vestings:", vestings);
 
-    // Find current user's vesting data
-    const myVesting = vestings.find(
-      (v) => v.employee.toLowerCase() === address!.toLowerCase()
-    );
+      // Find current user's vesting data
+      const myVesting = vestings.find(
+        (v) => v.employee.toLowerCase() === Address!.toLowerCase()
+      );
 
-    if (!myVesting) {
-      setError('No ESOP allocation found');
+      if (!myVesting) {
+        setError('No ESOP allocation found');
+        setLoading(false);
+        return;
+      }
+
+      console.log(myVesting)
+      const vestedAmount = (Number(myVesting.vestedAmount));
+      const totalAmount = (Number(myVesting.totalAmount));
+      const claimableAmount = (Number(myVesting.claimableAmount)) || 0;
+      const vestingProgress =
+        totalAmount > 0 ? (vestedAmount / totalAmount) * 100 : 0;
+
+      const status = getVestingStatus(myVesting);
+      setMyVestings(myVesting);
+      setEsopData({
+        vestedAmount,
+        totalAmount,
+        claimableAmount,
+        vestingData: myVesting,
+        vestingProgress: Math.round(vestingProgress),
+        status: status.status,
+        statusColor: status.color,
+        vestedContractAddress: myVesting.employeeDetails.vestingContractAddress || '',
+      });
+    } catch (error) {
+      console.error('Failed to load ESOP data:', error);
+      setError('Failed to load ESOP data');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const vestedAmount = weiToEth(Number(myVesting.vestedAmount));
-    const totalAmount = weiToEth(Number(myVesting.totalAmount));
-    const claimableAmount = weiToEth(Number(myVesting.claimableAmount)) || 0;
-    const vestingProgress =
-      totalAmount > 0 ? (vestedAmount / totalAmount) * 100 : 0;
-
-    const status = getVestingStatus(myVesting);
-
-    setEsopData({
-      vestedAmount,
-      totalAmount,
-      claimableAmount,
-      vestingData: myVesting,
-      vestingProgress: Math.round(vestingProgress),
-      status: status.status,
-      statusColor: status.color,
-    });
-  } catch (error) {
-    console.error('Failed to load ESOP data:', error);
-    setError('Failed to load ESOP data');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   const getVestingStatus = (vestingData: any) => {
@@ -124,10 +147,10 @@ export default function MyESOPsPage() {
     const startTime = Number(vestingData.start) || 0;
     const cliffMonths = Number(vestingData.cliff) || 0;
     const vestingMonths = Number(vestingData.duration) || 0;
-    
+
     const cliffTime = startTime + (cliffMonths * 30 * 24 * 60 * 60);
     const vestingEndTime = startTime + (vestingMonths * 30 * 24 * 60 * 60);
-    
+
     if (now < cliffTime) {
       return { status: 'Cliff Period', color: '' };
     } else if (now >= vestingEndTime) {
@@ -145,7 +168,26 @@ export default function MyESOPsPage() {
 
     try {
       setClaiming(true);
-      await claimVestedTokens();
+      // await claimVestedTokens();
+      const res = await claimAllTokens(esopData.vestedContractAddress);
+      if (!res) {
+        toast.error('Failed to claim tokens');
+        return;
+      }
+      const updateRes = await fetch(`/api/esops/${myVestings?.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          claimableAmount: 0,
+          claimed: esopData.vestedAmount
+        }),
+      });
+      const res1 = await updateRes.json();
+      console.log(res1, "updateRes")
+      if (!updateRes.ok) {
+        toast.error("Tokens claimed but failed to update database");
+        return;
+      }
       toast.success('Tokens claimed successfully!');
       // Reload ESOP data
       await loadMyESOPs();
@@ -290,7 +332,7 @@ export default function MyESOPsPage() {
                 <span className="font-medium">{esopData.vestingProgress}%</span>
               </div>
               <div className="w-full bg-muted rounded-full h-3">
-                <div 
+                <div
                   className="bg-primary h-3 rounded-full transition-all duration-300"
                   style={{ width: `${esopData.vestingProgress}%` }}
                 />
@@ -333,7 +375,7 @@ export default function MyESOPsPage() {
                 </span>
               </div>
               <div className="pt-3">
-                <Button 
+                <Button
                   onClick={handleClaimTokens}
                   disabled={claiming || esopData.claimableAmount <= 0}
                   className="w-full"
