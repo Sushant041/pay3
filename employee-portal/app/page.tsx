@@ -77,9 +77,9 @@ export default function Dashboard() {
 
         if (!formatted) return null;
         return {
-          employee: vesting.employeeId.walletAddress, // OR include full employee object
+          employee: vesting?.employeeId?.walletAddress, // OR include full employee object
           ...formatted,
-          employeeDetails: vesting.employeeId,
+          employeeDetails: vesting?.employeeId,
           id: vesting._id // optional full employee data
         };
       })
@@ -117,7 +117,7 @@ export default function Dashboard() {
 
         console.log(vestingdata, "vesting 1")
         // Find current user's vesting data
-        const userIndex = vestingdata.findIndex((emp: any) => emp.employee.toLowerCase() === Address!.toLowerCase());
+        const userIndex = vestingdata.findIndex((emp: any) => emp?.employee?.toLowerCase() === Address!.toLowerCase());
         
         if (userIndex !== -1) {
           // const userVestingRaw = vestingDataArray[userIndex];

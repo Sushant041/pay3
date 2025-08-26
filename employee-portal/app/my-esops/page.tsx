@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Gift, Clock, CheckCircle, AlertCircle, TrendingUp, Calendar, Wallet } from 'lucide-react';
-import { useAccount } from 'wagmi';
 import { LoadingSpinnerFull } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -82,7 +81,7 @@ export default function MyESOPsPage() {
 
         if (!formatted) return null;
         return {
-          employee: vesting.employeeId.walletAddress, // OR include full employee object
+          employee: vesting?.employeeId?.walletAddress, // OR include full employee object
           ...formatted,
           employeeDetails: vesting.employeeId,
           id: vesting._id // optional full employee data
@@ -105,7 +104,7 @@ export default function MyESOPsPage() {
 
       // Find current user's vesting data
       const myVesting = vestings.find(
-        (v) => v.employee.toLowerCase() === Address!.toLowerCase()
+        (v) => v.employee?.toLowerCase() === Address!.toLowerCase()
       );
 
       if (!myVesting) {
