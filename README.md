@@ -35,7 +35,7 @@ Resource Link
 
 [🔗 Open Employee Portal](https://employeepay3.vercel.app/)
 
-*Demo Video*
+*Demo Video link*
 
 [🔗 Watch on YouTube](https://www.youtube.com/watch?v=sL6cQ_l1aTA)
 
