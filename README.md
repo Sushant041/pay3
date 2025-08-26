@@ -1,193 +1,173 @@
+# *PayThree – Payroll & ESOPs for the Andromeda Ecosystem*
 
-# **PayThree – Payroll & ESOPs for the Morph Ecosystem**
+Built for the Andromeda Hackathon: Automated DeFi Legos Track
 
+## *Overview*
 
-## **Overview**
+*PayThree* is a next-generation platform built natively for the *Andromeda ecosystem, designed to redefine how organizations manage global payroll and ESOPs using **Andromeda Digital Objects (ADOs)* and the *aOS framework*.
 
+From a single, intuitive dashboard, organizations can *batch-process payouts* using Andromeda's Splitter ADO, guarantee *on-chain transparency* with every payment verifiable on blockchain explorers, automate *ESOP vesting* with Andromeda's Vesting ADO, send *instant email notifications* for payouts and stock option events, and enable *global, bank-free settlements* in seconds—all while leveraging Andromeda's composable, modular ADO infrastructure.
 
+With PayThree, payroll isn't just faster and more efficient—it's automated, verifiable, and built for the next generation of work using Andromeda's intelligent DeFi building blocks.
 
-**PayThree** is a next-generation platform built natively for the **Morph ecosystem**, designed to redefine how organizations manage global payroll and ESOPs.
+## *Hackathon Submission: Automated DeFi Legos*
 
-From a single, intuitive dashboard, organizations can **batch-process payouts** in one blockchain transaction, guarantee **on-chain transparency** with every payment verifiable on Morph’s explorer, automate **ESOP vesting**, send **instant email notifications** for payouts and stock option events, and enable **cross-border, bank-free settlements** in seconds all while leveraging Morph’s ultra-scalable, low-fee infrastructure.
-
-With PayThree, payroll isn’t just faster and cheaper  it’s global, verifiable, and built for the next generation of work
+PayThree perfectly embodies the *Automated DeFi Legos* track by combining multiple Andromeda ADOs to create intelligent, automated financial workflows for payroll and equity management. Our solution demonstrates how aOS and modular ADOs can create truly intelligent money management systems.
 
 ## Resources
 
-> **Note:** In the production version, the HR Portal is secured with role-based authentication and wallet verification.  
-> For the **Morph Hackathon demo**, we’ve temporarily kept it open so anyone can explore its features without setup friction.
+> *Note:* In the production version, the HR Portal is secured with role-based authentication and wallet verification.  
+> For the *Andromeda Hackathon demo*, we've temporarily kept it open so anyone can explore its features without setup friction.
 
-| Resource | Resource Link |
-|----------|---------------|
-| **GitHub Repository** | [🔗 View on GitHub](https://github.com/preyanshu/paythree) |
-| **HR Portal (Live Demo)** | [🔗 Open HR Portal](https://hrpaythreee-rho.vercel.app/) |
-| **Employee Portal (Live Demo)** | [🔗 Open Employee Portal](https://employeepaythreee.vercel.app/) |
-| **Demo Video** | [🔗 Watch on YouTube](https://youtube.com/your-demo-video) |
-| **MorphScan – ESOP Smart Contract** | [🔗 Contract](https://explorer-holesky.morphl2.io/address/0xE15718AE7Cb4a914194B3F090f3606cdFBE01130) |
-| **MorphScan – Payout Smart Contract** | [🔗Contract](https://explorer-holesky.morphl2.io/address/0x1Db5c1fA42C2899613352B199cDf9d9Aec8e8938?tab=token_transfers) |
+Resource
+
+Resource Link
+
+*GitHub Repository*
+
+[🔗 View on GitHub](https://github.com/Sushant041/pay3/)
+
+*HR Portal (Live Demo)*
+
+[🔗 Open HR Portal](https://hrpay3.vercel.app/)
+
+*Employee Portal (Live Demo)*
+
+[🔗 Open Employee Portal](https://employeepay3.vercel.app/)
+
+*Demo Video*
+
+[🔗 Watch on YouTube](https://www.youtube.com/watch?v=sL6cQ_l1aTA)
 
 
-## **The Problems in Web3 Payroll Today**
 
--   High gas fees from one-by-one transactions
-    
+
+## *The Problems in Traditional & Web3 Payroll Today*
+
+-   High gas fees from individual transactions
+-   Complex payroll management without unified tooling
 -   Wrong wallet addresses causing lost funds
-    
 -   Slow, costly cross-border payments
-    
--   No real-time employee communication
-    
--   Lack of ESOP lifecycle management
+-   No real-time employee communication for payouts
+-   Lack of composable, modular ESOP lifecycle management
+-   Manual processes that don't leverage DeFi automation potential
 
+## *PayThree's Andromeda-Powered Solution*
 
-## **PayThree’s Solution**
-
--   **Batch Payouts** – Pay multiple employees in one blockchain transaction
-    
--   **Verified Wallets** – Prevent costly payout errors
-    
--   **On-Chain Transparency** – All payouts verifiable on Etherscan
-    
--   **Automated ESOP Vesting** – Complete stock option lifecycle on-chain
-    
--   **Automated Email Notifications** – Instant payout/ESOP alerts to inbox
-    
--   **Cross-Border, Bank-Free** – Instant blockchain settlement worldwide
-
-
-## **Why PayThree Stands Out from Other Web3 Payment Solutions**
-
-1.  **Full ESOP Support** 
-    
-    -   We’re not just payroll  we handle the entire **stock option lifecycle**, including granting, vesting, and claiming, all on-chain.
-        
-2.  **Seamless Gasless Experience** 
-    
-    -   Using **off-chain endpoints** + meta-transactions, for the minimal gas experience.
-        
-3.  **Smart Contract per Organization** 
-    
-    -   Every org gets its **own deployed smart contract**, isolating funds, improving security, and enabling organization-specific custom logic.
-        
-4.  **Two-Way Communication** 
-    
-    -   Automated emails ensure employees always know when payouts happen  unlike most tools that rely only on blockchain explorers.
-        
-5.  **Integrated Employee Portal** 
-    
-    -   Other tools focus only on admin dashboards PayThree gives employees their **own secure space** to track pay, ESOPs, and notifications.
-
-## **HR Portal – For Organizations**
-
-### **Wallet-First Security**
-
-<img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/e2f7ad2d-efa3-4d33-8da1-0732e4a6850a" />
+-   *ADO-Based Batch Payouts* – Use Andromeda's Splitter ADO for efficient multi-recipient payments
+-   *Automated ESOP Management* – Leverage Vesting ADO for complete stock option lifecycle
+-   *Composable Architecture* – Built with aOS for seamless ADO integration
+-   *Verified Wallets* – Prevent costly payout errors
+-   *On-Chain Transparency* – All payouts verifiable on blockchain explorers
+-   *Automated Email Notifications* – Instant payout/ESOP alerts to inbox
+-   *Intelligent DeFi Workflows* – Automated financial processes using ADO composability
 
 
 
-    
+## *HR Portal – For Organizations*
 
-### **Employee Management**
+### *Wallet-First Security*
 
--   Add & manage blockchain-linked employee profiles.
+![Wallet Connection](https://github.com/user-attachments/assets/cf0b3929-cab8-47a8-973b-735f08ae94d4)
 
- <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/73f4b52d-9f70-405f-9a9e-d8e87014a8e9" />
+### *Employee Management*
 
+-   Add & manage Cosmos ecosystem-linked employee profiles across multiple chains. ![Employee Management](https://github.com/user-attachments/assets/f3298ffc-d173-4b54-b78e-bee3cf5929f3)
 
-    
+### *ADO-Powered ESOP Management*
 
-### **ESOP Management**
-
--   Grant, track, and vest ESOPs automatically.
-
-  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/00fb6fbc-ade1-4996-a12b-db9ed9a2876d" />
-
-    
-
-### **Payout Processing**
-
--   One-click batch payouts with transaction history.
-    <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/84681c2c-b3ac-4649-bcb4-5dd587836245" />
+-   Grant, track, and vest ESOPs automatically using Andromeda's Vesting ADO. <img width="1917" height="912" alt="image" src="https://github.com/user-attachments/assets/5c433e64-9e0b-4003-b0bf-c65ae4a2276e" />
 
 
-### **Settings & Configurations**
+### *Splitter ADO Payout Processing*
 
--   Manage org details, token addresses, and payout preferences.
+-   One-click batch payouts using Andromeda's Splitter ADO with transaction history. <img width="1919" height="898" alt="image" src="https://github.com/user-attachments/assets/5e694a1a-7695-4449-a15c-eedcec60628f" />
 
-  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/0c4157b4-5a0c-4b56-a5b3-2cc1f8a50257" />
 
-    
+### *Settings & Configurations*
+
+-   Manage org details, token addresses, and payout preferences.<img width="1913" height="901" alt="image" src="https://github.com/user-attachments/assets/a717b7b8-89f8-4524-8da3-59ff79af7410" />
+
 
 ----------
 
-## **Employee Portal – For Employees**
+## *Employee Portal – For Employees*
 
-### **Dashboard**
+### *Dashboard*
 
--   View total earnings, upcoming payouts, and ESOP progress.
+-   View total earnings, upcoming payouts, and ESOP progress. <img width="1909" height="905" alt="image" src="https://github.com/user-attachments/assets/e3609fb7-4424-4f28-baae-bacb44920ebe" />
 
-  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/cf8e080c-c23e-42fb-aaf8-84676bd86e1b" />
 
+### *My ESOPs*
+
+-   Track grants, vesting timelines, and claim options powered by Vesting ADO. <img width="1915" height="904" alt="Screenshot 2025-08-26 063913" src="https://github.com/user-attachments/assets/5466d3b3-f0e4-48e1-88d1-08dc82aa1e95" />
+
+
+### *My Pay*
+
+-   View payout history and verify on-chain details. <img width="1906" height="894" alt="image" src="https://github.com/user-attachments/assets/5ae294c8-991c-4151-a2f4-02dbb143bf9d" />
+
+
+
+
+## *Future Roadmap for Andromeda*
+
+1.  *AI-Powered Payroll Automation*
     
-
-### **My ESOPs**
-
--   Track grants, vesting timelines, and claim options.
-
-  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/4cdae53d-de44-4a34-b765-294eee3c1ae4" />
-
+    -   Integrate AI to automate payouts, detect anomalies, and optimize distribution strategies.
+2.  *Advanced DeFi Integration*
     
-
-### **My Pay**
-
--   View payout history and verify on-chain details.
-
-  <img width="1851" height="999" alt="image" src="https://github.com/user-attachments/assets/6284a88e-b94d-4672-ad8f-af806d958203" />
-
-
-## **Future Roadmap for Morph**
-
-1.  **AI Payroll Agent** 
+    -   Connect with lending protocols and yield farms for automatic salary optimization.
+3.  *Compliance & Tax Automation*
     
-    -   Automates payouts, detects anomalies, optimizes gas usage.
-        
-2.  **Deep Fiat–Crypto Bridge** 
+    -   Generate jurisdiction-specific payroll & ESOP reports using ADO workflows.
+4.  *Performance-Based Pay Systems*
     
-    -   Seamless on/off-ramp integrations for global salary distribution.
+    -   Use Conditional Splitter ADO for merit-based and milestone-driven compensation.
+5.  *Token Creator Integration*
     
-4.  **Compliance & Tax Automation** 
-    
-    -   Generate jurisdiction-specific payroll & ESOP reports.
-        
-5.  **DeFi-Integrated Payroll** 
-    
-    -   Auto-stake salaries into Morph-native DeFi protocols for passive yield.
-    
- 6.  **ZK-Powered Privacy Layer**
+    -   Enable organizations to create custom tokens for internal compensation systems.
 
-     -  Use zero-knowledge proofs to verify payouts occurred without revealing individual employee salaries, protecting privacy while maintaining transparency.
+# Value to the Andromeda Ecosystem
 
-# Value to the Morph Ecosystem
+PayThree demonstrates the real-world application of Andromeda's automated DeFi building blocks, showcasing how ADOs can be composed to solve actual business problems.
 
-PayThree is a flagship utility dApp that amplifies Morph's strengths and drives ecosystem growth.
+## 1. Showcasing ADO Composability
 
-## 1. Showcasing Morph's Low-Fee, High-Speed Network
+Demonstrates how Splitter and Vesting ADOs can be combined with aOS to create powerful, automated financial applications that solve real business needs.
 
-Batch payouts and ESOP distributions become near-instant and cost-effective, demonstrating Morph's scalable Layer 2 design for high-volume transactions.
+## 2. Driving ADO Adoption
 
-## 2. Driving On-Chain Activity
+Every organization using PayThree becomes a user of multiple Andromeda ADOs, increasing adoption metrics and proving the value of the modular architecture.
 
-Every payout, ESOP vesting, and claim increases Morph's daily active users and transaction count, boosting network health metrics that attract developers and investors.
+## 3. Real-World Use Case Validation
 
-## 3. Expanding Use Cases Beyond DeFi
+PayThree proves that Andromeda's "DeFi Legos" can power enterprise applications, not just experimental protocols, opening doors for corporate adoption.
 
-PayThree introduces HR, payroll, and corporate finance as new categories, broadening Morph's ecosystem diversity and showcasing its versatility.
+## 4. Attracting Enterprise Users
 
-## 4. Attracting Organizations & Teams to Morph
+Companies and DAOs using PayThree naturally onboard employees into the Andromeda ecosystem, expanding the user base organically.
 
-Companies and DAOs using PayThree naturally onboard employees and contractors onto Morph, expanding the user base organically through payroll adoption.
+## 5. Automated Workflow Showcase
 
-## 5. Future Integrations that Strengthen Morph's Position
+Our platform demonstrates how aOS can create intelligent, automated financial workflows that reduce manual intervention and increase efficiency.
 
-Our roadmap includes AI-powered payroll agents, ZK-based privacy verification, and fiat on/off-ramps all built natively on Morph, cementing it as the go-to chain for Web3 payroll infrastructure.
 
+
+## *Getting Started*
+
+1.  *Connect Your Wallet* - Support for Keplr and other Andromeda-compatible wallets
+2.  *Set Up Your Organization* - Deploy your organization's ADO combination
+3.  *Add Employees* - Register employees with their wallet addresses
+4.  *Configure Payroll* - Set up batch payouts using Splitter ADO
+5.  *Manage ESOPs* - Grant and track stock options with Vesting ADO
+
+## *Technical Requirements*
+
+-   Andromeda-compatible wallet
+-   aOS framework access
+-   Compatible blockchain network
+
+----------
+
+PayThree: Demonstrating the future of automated DeFi through real-world payroll solutions on Andromeda.
